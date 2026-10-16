@@ -1,5 +1,5 @@
-"""Собирает index.html и daily.html (зашифрованные паролем).
-python3 tools/build.py DATA_JSON OUT_DIR   (пароль в переменной окружения PAGE_PASSWORD)"""
+"""Собирает index.html, daily.html (пароль PAGE_PASSWORD) и motivation.html (отдельный пароль MOTIV_PASSWORD; если не задан — страница не собирается).
+python3 tools/build.py DATA_JSON OUT_DIR"""
 import sys, os, json, re, gzip, base64
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -21,7 +21,7 @@ def page(src, title, link_from, link_to, shim, rawjson, extra=''):
     inject = '<script>window.__RAW=' + rawjson + ';' + extra + '</script><script>' + rd(shim) + '</script>'
     return html[:first] + inject + html[first:] + '</div></body></html>'
 v = lambda k: {'values': data[k]}
-raw_m = {k: v(k) for k in ['acts', 'deals_detail', 'hist', 'plan', 'hist_kpi', 'money']}
+raw_m = {k: v(k) for k in ['acts', 'deals_detail', 'hist', 'plan', 'hist_kpi']}
 m = page(rd('monthly_src.html'), 'SALES DEPARTMENT', 'https://claude.ai/artifact/NoG7PGVVzZTBpeKUdtLWSA', 'daily.html', 'shim_m.js', json.dumps(raw_m, ensure_ascii=False, separators=(',', ':')))
 m = m.replace('<h1>SALES DEPARTMENT <span>по месяцам</span></h1>', '<h1>SALES DEPARTMENT</h1>')
 raw_d = {k: v(k) for k in ['acts', 'deals_detail', 'svod']}
@@ -38,3 +38,9 @@ def enc(html, title, dst):
     open(os.path.join(out, dst), 'w', encoding='utf-8').write(w); print(dst, len(w))
 enc(m, 'SALES DEPARTMENT', 'index.html')
 enc(d, 'SALES DEPARTMENT — по дням', 'daily.html')
+
+if os.environ.get('MOTIV_PASSWORD'):
+    from html import escape
+    sys.path.insert(0, T); import motivation
+    pw = os.environ['MOTIV_PASSWORD']
+    enc(motivation.render(data['money'], tokens, FONT, None), 'Мотивация отдела продаж', 'motivation.html')
