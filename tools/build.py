@@ -39,10 +39,13 @@ def enc(html, title, dst):
 enc(m, 'SALES DEPARTMENT', 'index.html')
 enc(d, 'SALES DEPARTMENT — по дням', 'daily.html')
 
-sys.path.insert(0, T); import motivation
+sys.path.insert(0, T); import motivation, motivation_full
+last = max(data['days'], key=lambda x: (x[6:], x[3:5], x[:2]))
+m_ = re.search(r'(\d{2}\.\d{2}\.\d{4})(?: (\d{2}:\d{2}))?', data['days'][last]['rows'][0][0])
+snap = (m_.group(1) + (' ' + m_.group(2) if m_.group(2) else '')) if m_ else last
 if os.environ.get('MOTIV_PASSWORD'):
     pw = os.environ['MOTIV_PASSWORD']
-    enc(motivation.team(data['money']), 'Мотивация отдела продаж', 'motivation.html')
+    enc(motivation_full.full(data['money'], data['plan'], snap, 'team'), 'Мотивация и KPI команды', 'motivation.html')
 if os.environ.get('ROP_PASSWORD'):
     pw = os.environ['ROP_PASSWORD']
-    enc(motivation.rop(data['money']), 'Мотивация РОПа', 'rop.html')
+    enc(motivation_full.full(data['money'], data['plan'], snap, 'rop'), 'Мотивация и KPI РОПа', 'rop.html')
