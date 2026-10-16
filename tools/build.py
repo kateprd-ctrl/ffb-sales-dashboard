@@ -21,7 +21,7 @@ def page(src, title, link_from, link_to, shim, rawjson, extra=''):
     inject = '<script>window.__RAW=' + rawjson + ';' + extra + '</script><script>' + rd(shim) + '</script>'
     return html[:first] + inject + html[first:] + '</div></body></html>'
 v = lambda k: {'values': data[k]}
-raw_m = {k: v(k) for k in ['acts', 'deals_detail', 'hist', 'plan', 'hist_kpi']}
+raw_m = {k: v(k) for k in ['acts', 'deals_detail', 'hist', 'plan', 'hist_kpi', 'money']}
 m = page(rd('monthly_src.html'), 'SALES DEPARTMENT', 'https://claude.ai/artifact/NoG7PGVVzZTBpeKUdtLWSA', 'daily.html', 'shim_m.js', json.dumps(raw_m, ensure_ascii=False, separators=(',', ':')))
 m = m.replace('<h1>SALES DEPARTMENT <span>по месяцам</span></h1>', '<h1>SALES DEPARTMENT</h1>')
 raw_d = {k: v(k) for k in ['acts', 'deals_detail', 'svod']}

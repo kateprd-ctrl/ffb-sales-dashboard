@@ -16,6 +16,7 @@ def kind_of(rows):
     if h[:2] == ['Дата', 'Месяц лидов']: return ('hist_kpi', None)
     if h[:2] == ['Дата', 'В работе, шт']: return ('svod', None)
     if first.startswith('ключ месяца'): return ('plan', None)
+    if first.startswith('МОТИВАЦИЯ'): return ('money', None)
     return (None, None)
 def add(rows, links=None):
     k, d = kind_of(rows)
@@ -28,13 +29,14 @@ for f in sys.argv[2:]:
         add(j['values'])
     elif 'sheets' in j:
         for s in j['sheets']:
-            rd = ((s.get('data') or [{}])[0]).get('rowData') or []
+          for blk in (s.get('data') or [{}]):
+            rd = blk.get('rowData') or []
             rows = [[(c.get('formattedValue') if c else '') or '' for c in (r.get('values') or [])] for r in rd]
             links = {i: r['values'][0].get('hyperlink') for i, r in enumerate(rd) if r.get('values') and r['values'][0] and r['values'][0].get('hyperlink')}
             while rows and all(x == '' for x in rows[-1]): rows.pop()
             add(rows, links)
 print('дней:', len(data['days']))
-need = ['hist','acts','deals_detail','hist_kpi','svod','plan']
+need = ['hist','acts','deals_detail','hist_kpi','svod','plan','money']
 miss = [k for k in need if k not in data]
 if miss or not data['days']: print('НЕ ХВАТАЕТ:', miss, 'дней' if not data['days'] else ''); sys.exit(1)
 json.dump(data, open(os.path.join(out, 'data.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
