@@ -30,22 +30,27 @@ d = page(rd('daily_src.html'), 'SALES DEPARTMENT — по дням', 'https://cl
 b64 = lambda x: base64.b64encode(x).decode()
 logo = b64(open(os.path.join(T, 'logo.png'), 'rb').read())
 WRAP = rd('wrapper.html')
-def enc(html, title, dst):
-    salt, iv = os.urandom(16), os.urandom(12)
-    key = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=250000).derive(pw.encode())
-    ct = AESGCM(key).encrypt(iv, html.encode('utf-8'), None)
-    w = WRAP.replace('%%TITLE%%', title).replace('%%LOGO%%', logo).replace('%%SALT%%', b64(salt)).replace('%%IV%%', b64(iv)).replace('%%CT%%', b64(ct))
+def enc(items, title, dst):
+    """items: список (html, пароль); любой из паролей открывает свою страницу."""
+    ents = []
+    for html, pw_ in items:
+        salt, iv = os.urandom(16), os.urandom(12)
+        key = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=250000).derive(pw_.encode())
+        ents.append([b64(salt), b64(iv), b64(AESGCM(key).encrypt(iv, html.encode('utf-8'), None))])
+    w = WRAP.replace('%%TITLE%%', title).replace('%%LOGO%%', logo).replace('%%ENTRIES%%', json.dumps(ents))
     open(os.path.join(out, dst), 'w', encoding='utf-8').write(w); print(dst, len(w))
-enc(m, 'SALES DEPARTMENT', 'index.html')
-enc(d, 'SALES DEPARTMENT — по дням', 'daily.html')
+LINK = '<a href="motivation.html" style="font:600 .8125rem Inter,sans-serif;color:#d03040;text-decoration:none;border:1px solid #d03040;border-radius:999px;padding:.35rem .9rem">Мотивация →</a>'
+wrap = lambda cls: '<span style="display:flex;gap:.5rem;align-items:center"><span class="' + cls + '">Отдел продаж</span>' + LINK + '</span>'
+m = m.replace('<span class="rm-tag">Отдел продаж</span>', wrap('rm-tag'), 1)
+d = d.replace('<span class="rp-tag">Отдел продаж</span>', wrap('rp-tag'), 1)
+enc([(m, os.environ['PAGE_PASSWORD'])], 'SALES DEPARTMENT', 'index.html')
+enc([(d, os.environ['PAGE_PASSWORD'])], 'SALES DEPARTMENT — по дням', 'daily.html')
 
 sys.path.insert(0, T); import motivation, motivation_full
 last = max(data['days'], key=lambda x: (x[6:], x[3:5], x[:2]))
 m_ = re.search(r'(\d{2}\.\d{2}\.\d{4})(?: (\d{2}:\d{2}))?', data['days'][last]['rows'][0][0])
 snap = (m_.group(1) + (' ' + m_.group(2) if m_.group(2) else '')) if m_ else last
-if os.environ.get('MOTIV_PASSWORD'):
-    pw = os.environ['MOTIV_PASSWORD']
-    enc(motivation_full.full(data['money'], data['plan'], snap, 'team'), 'Мотивация и KPI команды', 'motivation.html')
-if os.environ.get('ROP_PASSWORD'):
-    pw = os.environ['ROP_PASSWORD']
-    enc(motivation_full.full(data['money'], data['plan'], snap, 'rop'), 'Мотивация и KPI РОПа', 'rop.html')
+if os.environ.get('MOTIV_PASSWORD') and os.environ.get('ROP_PASSWORD'):
+    # одна страница мотивации: пароль команды открывает страницу команды, пароль РОПа — страницу РОПа
+    enc([(motivation_full.full(data['money'], data['plan'], snap, 'team'), os.environ['MOTIV_PASSWORD']),
+         (motivation_full.full(data['money'], data['plan'], snap, 'rop'), os.environ['ROP_PASSWORD'])], 'Мотивация', 'motivation.html')

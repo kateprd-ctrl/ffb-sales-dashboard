@@ -9,18 +9,20 @@ button{width:100%;font:inherit;font-weight:600;padding:.7rem 1rem;border:0;borde
 <div class="w"><form class="c" id="f"><img alt="Fulfillment-Box" src="data:image/png;base64,%%LOGO%%"><h1>%%TITLE%%</h1><p>Введите пароль, чтобы открыть отчёт</p>
 <input id="p" type="password" autocomplete="current-password" placeholder="Пароль" autofocus><button type="submit">Открыть</button><div class="e" id="e"></div></form></div>
 <script>
-const S="%%SALT%%",I="%%IV%%",C="%%CT%%";
+const ENT=%%ENTRIES%%;
 const d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-async function open_(pw){
+async function open_(pw,e){
   const k0=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
-  const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:d(S),iterations:250000,hash:'SHA-256'},k0,{name:'AES-GCM',length:256},false,['decrypt']);
-  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:d(I)},k,d(C));
+  const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:d(e[0]),iterations:250000,hash:'SHA-256'},k0,{name:'AES-GCM',length:256},false,['decrypt']);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:d(e[1])},k,d(e[2]));
   return new TextDecoder().decode(pt);
 }
-async function go(pw){
-  try{const h=await open_(pw);try{sessionStorage.setItem('ffbpw',pw)}catch(e){}document.open();document.write(h);document.close();}
-  catch(e){document.getElementById('e').textContent='Неверный пароль';}
+async function go(pw,silent){
+  for(const e of ENT){
+    try{const h=await open_(pw,e);try{sessionStorage.setItem('ffbpw_'+ENT[0][0].slice(0,8),pw)}catch(x){}document.open();document.write(h);document.close();return;}catch(x){}
+  }
+  if(!silent)document.getElementById('e').textContent='Неверный пароль';
 }
 document.getElementById('f').addEventListener('submit',ev=>{ev.preventDefault();go(document.getElementById('p').value)});
-try{const s=sessionStorage.getItem('ffbpw');if(s)go(s)}catch(e){}
+try{const s=sessionStorage.getItem('ffbpw_'+ENT[0][0].slice(0,8));if(s)go(s,true)}catch(e){}
 </script></body></html>
