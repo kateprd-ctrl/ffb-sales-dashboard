@@ -19,10 +19,10 @@ async function open_(pw,e){
 }
 async function go(pw,silent){
   for(const e of ENT){
-    try{const h=await open_(pw,e);try{sessionStorage.setItem('ffbpw_'+ENT[0][0].slice(0,8),pw)}catch(x){}document.open();document.write(h);document.close();return;}catch(x){}
+    try{const h=await open_(pw,e);try{sessionStorage.setItem('ffbpw',pw)}catch(x){}document.open();document.write(h);document.close();return;}catch(x){}
   }
   if(!silent)document.getElementById('e').textContent='Неверный пароль';
 }
 document.getElementById('f').addEventListener('submit',ev=>{ev.preventDefault();go(document.getElementById('p').value)});
-try{const s=sessionStorage.getItem('ffbpw_'+ENT[0][0].slice(0,8));if(s)go(s,true)}catch(e){}
+try{const s=sessionStorage.getItem('ffbpw');if(s)go(s,true)}catch(e){}
 </script></body></html>
