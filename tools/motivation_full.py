@@ -37,15 +37,15 @@ def kpi_html(plan):
         prog = max(0, min(1, prog))
         pct = name.split()[0] in ('Конверсия', 'Доля', 'Лиды', 'Живые')
         gap = (('%.1f' % (abs(cur - nov) * 100)).replace('.', ',').replace(',0', '') + ' п.п.') if pct else fmt(name, abs(cur - nov))
-        status = '<span class="ok">в пределах цели ноября (месяц ещё идёт)</span>' if done else '<span class="no">до цели ноября ещё %s</span>' % gap
-        h += ('<div class="kp"><div class="kk">%s</div><div class="kt">%s</div><div class="kb"><i style="width:%d%%"></i></div>'
+        status = '<span class="ok">✓ В норме: цель ноября уже достигнута (месяц ещё идёт)</span>' if done else '<span class="no">до цели ноября ещё %s</span>' % gap
+        h += ('<div class="kp %s"><div class="kk">%s</div><div class="kt">%s</div><div class="kb"><i style="width:%d%%"></i></div>'
               '<div class="kr"><span>Сейчас <b>%s</b></span><span>Ноябрь <b>%s</b></span><span>Декабрь <b>%s</b></span><span>%s</span></div>'
-              '<p class="ka">%s</p></div>') % (tag, name, round(prog * 100), fmt(name, cur), fmt(name, nov), fmt(name, dec), status, act)
+              '<p class="ka">%s</p></div>') % ('kok' if done else 'kno', tag, name, round(prog * 100), fmt(name, cur), fmt(name, nov), fmt(name, dec), status, act)
     return h
 EXTRA_CSS = (".sec{margin:0 0 .4rem;font-size:1.05rem;font-weight:700}.stamp{color:#6b7280;font-size:.875rem;margin:-10px 0 14px}"
- ".kp{border-top:1px solid #f0f0f0;padding:.8rem 0}.kt{font-weight:600}.kk{color:#d03040;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}"
- ".kb{height:8px;background:#f1f1f1;border-radius:99px;overflow:hidden;margin:.55rem 0}.kb i{display:block;height:100%;background:#d03040;border-radius:99px}"
- ".kr{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;font-size:.875rem;color:#6b7280}.kr b{color:#111}.ok{color:#14804a;font-weight:600}.no{color:#b3261e;font-weight:600}.ka{margin:.4rem 0 0;font-size:.875rem}"
+ ".kp{border-top:1px solid #f0f0f0;padding:.8rem 0}.kt{font-weight:600}.kk{color:#6b7280;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}"
+ ".kb{height:8px;background:#f1f1f1;border-radius:99px;overflow:hidden;margin:.55rem 0}.kb i{display:block;height:100%;background:#d97706;border-radius:99px}.kp.kok .kb i{background:#14804a}"
+ ".kr{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;font-size:.875rem;color:#6b7280}.kr b{color:#111}.ok{color:#14804a;font-weight:600}.no{color:#b45309;font-weight:600}.ka{margin:.4rem 0 0;font-size:.875rem}"
  ".wk{display:grid;gap:.5rem}.wk>div{border:1px solid #ececec;border-radius:14px;padding:.6rem .8rem;font-size:.875rem}.wk>div.now{border-color:#d03040;background:#fff4f5}.wk b{display:block}"
  ".rules{margin:0;padding-left:1.1rem;font-size:.875rem;line-height:1.5}.m+.m{margin-top:1rem}")
 SCRIPT = ("<script>(function(){var d=new Date(),el=document.getElementById('today');if(el)el.textContent=d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});"
