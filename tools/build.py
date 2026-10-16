@@ -1,4 +1,4 @@
-"""Собирает index.html, daily.html (пароль PAGE_PASSWORD) и motivation.html (отдельный пароль MOTIV_PASSWORD; если не задан — страница не собирается).
+"""Собирает index.html, daily.html (пароль PAGE_PASSWORD) и motivation.html (пароль MOTIV_PASSWORD, для команды) и rop.html (пароль ROP_PASSWORD, только для РОПа); если пароль не задан — страница не собирается.
 python3 tools/build.py DATA_JSON OUT_DIR"""
 import sys, os, json, re, gzip, base64
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -39,8 +39,10 @@ def enc(html, title, dst):
 enc(m, 'SALES DEPARTMENT', 'index.html')
 enc(d, 'SALES DEPARTMENT — по дням', 'daily.html')
 
+sys.path.insert(0, T); import motivation
 if os.environ.get('MOTIV_PASSWORD'):
-    from html import escape
-    sys.path.insert(0, T); import motivation
     pw = os.environ['MOTIV_PASSWORD']
-    enc(motivation.render(data['money'], tokens, FONT, None), 'Мотивация отдела продаж', 'motivation.html')
+    enc(motivation.team(data['money']), 'Мотивация отдела продаж', 'motivation.html')
+if os.environ.get('ROP_PASSWORD'):
+    pw = os.environ['ROP_PASSWORD']
+    enc(motivation.rop(data['money']), 'Мотивация РОПа', 'rop.html')
