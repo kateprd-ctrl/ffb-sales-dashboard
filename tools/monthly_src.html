@@ -465,7 +465,7 @@ dash.calc('month_all', {
     const rows = d.data;
     const months = [...new Set(rows.map((r) => r['Месяц']))].sort();
     const curMonth = months[months.length - 1];
-    if (!init) { init = true; if (!RM.month()) { const full = months.length > 1 ? months[months.length - 2] : curMonth; dash.setParams({ month: full }); return; } }
+    if (!init) { init = true; if (!RM.month()) { const full = curMonth; dash.setParams({ month: full }); return; } }
     const M = RM.month() && months.includes(RM.month()) ? RM.month() : curMonth;
     const N = RM.mgr();
     monthsEl.replaceChildren(...months.map((m) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.m = m; b.textContent = RM.label(m) + (m === '2026-08' ? ' · с 11.08' : m === curMonth ? ' · идёт' : ''); b.setAttribute('aria-pressed', String(m === M)); return b; }));
