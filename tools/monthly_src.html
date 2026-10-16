@@ -908,11 +908,11 @@ dash.loader('money', {
     const g = mk('div', 'pf-mgrid');
     const cell = (lbl, val, sub) => { const c = mk('div'); c.append(mk('span', null, lbl), mk('b', null, val)); if (sub) c.append(mk('small', null, sub)); return c; };
     g.append(
-      cell('РОП, квартальный бонус', team && rop['Сумма'] != null ? eur(rop['Сумма']) : '—', rop['Значение'] != null ? Math.round(rop['Значение'] * 100) + '% фонда' : ''),
+      cell('РОП, бонус за период плана', team && rop['Сумма'] != null ? eur(rop['Сумма']) : '—', rop['Значение'] != null ? Math.round(rop['Значение'] * 100) + '% фонда' : ''),
       cell('Менеджерам, командный бонус за дисциплину', team['Сумма'] != null ? eur(team['Сумма']) : '—', perMgr != null ? eur(perMgr) + ' на человека (' + nm + ')' : ''),
       cell('Менеджерам, доплата за возвращённых клиентов', back['Сумма'] != null ? eur(back['Сумма']) : '—', perDeal != null ? eur(perDeal) + ' за сделку (при ' + nd + ' возвратах)' : '')
     );
-    box.append(g, mk('p', 'rm-note', 'Фонд = ФОТ ' + eur(fot) + ' × ' + months + ' мес. × ' + Math.round(pct * 1000) / 10 + '%. ФОТ, процент и доли меняются в таблице (вкладка «План KPI», жёлтые ячейки). Полная выплата — при 100% плана; ниже 80% по блоку премия не платится.'));
+    box.append(g, mk('p', 'rm-note', 'Фонд = ФОТ ' + eur(fot) + ' × ' + months + ' мес. × ' + Math.round(pct * 1000) / 10 + '%. Суммы бонусов, ФОТ и ставки меняются в таблице (вкладка «План KPI», жёлтые ячейки). Полная выплата — при 100% плана; ниже 80% по блоку премия не платится.'));
   });
 })();
 </script>
