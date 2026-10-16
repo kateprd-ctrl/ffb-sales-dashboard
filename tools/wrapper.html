@@ -1,0 +1,26 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>%%TITLE%%</title>
+<style>html,body{margin:0;height:100%;background:#fafafa;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#111}
+.w{min-height:100%;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+.c{background:#fff;border:1px solid #ececec;border-radius:24px;box-shadow:0 10px 30px -18px rgba(0,0,0,.25);padding:32px;max-width:380px;width:100%;text-align:center}
+img{height:42px;mix-blend-mode:multiply}h1{font-size:1.25rem;margin:18px 0 6px}p{color:#6b7280;font-size:.9rem;margin:0 0 18px}
+input{width:100%;box-sizing:border-box;font:inherit;padding:.7rem 1rem;border:1px solid #e3e3e3;border-radius:999px;margin-bottom:12px}
+button{width:100%;font:inherit;font-weight:600;padding:.7rem 1rem;border:0;border-radius:999px;background:#d03040;color:#fff;cursor:pointer}
+.e{color:#b3261e;font-size:.85rem;min-height:1.2em;margin-top:10px}</style></head><body>
+<div class="w"><form class="c" id="f"><img alt="Fulfillment-Box" src="data:image/png;base64,%%LOGO%%"><h1>%%TITLE%%</h1><p>Введите пароль, чтобы открыть отчёт</p>
+<input id="p" type="password" autocomplete="current-password" placeholder="Пароль" autofocus><button type="submit">Открыть</button><div class="e" id="e"></div></form></div>
+<script>
+const S="%%SALT%%",I="%%IV%%",C="%%CT%%";
+const d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function open_(pw){
+  const k0=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+  const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:d(S),iterations:250000,hash:'SHA-256'},k0,{name:'AES-GCM',length:256},false,['decrypt']);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:d(I)},k,d(C));
+  return new TextDecoder().decode(pt);
+}
+async function go(pw){
+  try{const h=await open_(pw);try{sessionStorage.setItem('ffbpw',pw)}catch(e){}document.open();document.write(h);document.close();}
+  catch(e){document.getElementById('e').textContent='Неверный пароль';}
+}
+document.getElementById('f').addEventListener('submit',ev=>{ev.preventDefault();go(document.getElementById('p').value)});
+try{const s=sessionStorage.getItem('ffbpw');if(s)go(s)}catch(e){}
+</script></body></html>

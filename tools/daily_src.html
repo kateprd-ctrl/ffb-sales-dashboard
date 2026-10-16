@@ -1,0 +1,1291 @@
+<style>
+#dash-root .rp { display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); font-variant-numeric: tabular-nums; }
+#dash-root .rp-head { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+#dash-root .rp-head h1 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); text-wrap: balance; }
+#dash-root .rp-take { margin: var(--cds-gap-xs) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 75ch; }
+#dash-root .rp-take b { color: var(--color-fg); font-weight: 600; }
+#dash-root .rp-controls { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); align-items: flex-end; }
+#dash-root .rp-pick { display: flex; flex-direction: column; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rp-pick select { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); min-width: 9rem; }
+#dash-root .rp-mgrs { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+#dash-root .rp-mgrs button { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: var(--cds-pad-xs) var(--cds-pad-md); cursor: pointer; }
+#dash-root .rp-mgrs button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+#dash-root .rp-mgrs button:focus-visible, #dash-root .rp-pick select:focus-visible, #dash-root .rp-chips button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+#dash-root .rp-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-md); }
+#dash-root .rp-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+#dash-root .rp-lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
+#dash-root .rp-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.1; }
+#dash-root .rp-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rp-good { color: var(--color-ok); }
+#dash-root .rp-bad { color: var(--color-bad); }
+#dash-root .rp-warn { color: var(--color-warn); }
+#dash-root details.rp-fold > summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; justify-content: space-between; gap: var(--cds-gap-sm); }
+#dash-root details.rp-fold > summary::-webkit-details-marker { display: none; }
+#dash-root details.rp-fold > summary .rp-more { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); white-space: nowrap; }
+#dash-root details.rp-fold > summary .rp-more::after { content: ' ▾'; }
+#dash-root details.rp-fold[open] > summary .rp-more { font-size: 0; }
+#dash-root details.rp-fold[open] > summary .rp-more::after { content: 'свернуть ▴'; font-size: var(--cds-font-size-caption); }
+#dash-root details.rp-fold:not([open]) { gap: 0; }
+#dash-root details.rp-fold > summary:hover h3 { text-decoration: underline; text-decoration-color: var(--color-border-line); }
+#dash-root a.rp-jump { text-decoration: none; color: inherit; cursor: pointer; }
+#dash-root a.rp-jump:hover { border-color: var(--color-fg-muted); }
+#dash-root td.rp-score { font-weight: var(--cds-font-weight-medium); }
+#dash-root .rp-sec { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+#dash-root .rp-sec > h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+#dash-root .rp-sec > p { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); max-width: 80ch; }
+#dash-root .rp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: var(--cds-gap-md); }
+#dash-root .rp-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+#dash-root .rp-card.rp-alert { border-left: 4px solid var(--cds-chart-status-critical); }
+#dash-root .rp-card h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); display: flex; align-items: baseline; gap: var(--cds-gap-sm); flex-wrap: wrap; }
+#dash-root .rp-card h3 .rp-count { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+#dash-root .rp-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rp-tbl { max-height: 22rem; overflow: auto; }
+#dash-root .rp-tbl table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
+#dash-root .rp-tbl th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+#dash-root .rp-tbl td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+#dash-root .rp-tbl td.rp-n, #dash-root .rp-tbl th.rp-n { text-align: right; white-space: nowrap; }
+#dash-root .rp-tbl td.rp-deal { max-width: 18rem; overflow-wrap: anywhere; }
+#dash-root .rp-tbl td .rp-pc { color: var(--color-fg-muted); margin-left: .35rem; }
+#dash-root .rp-tbl tr.rp-hl td { color: var(--color-bad); }
+#dash-root .rp-tbl tr.rp-hl td.rp-good { color: var(--color-ok); }
+#dash-root .rp-tbl tr.rp-sel td { background: var(--cds-chart-grid); }
+#dash-root .rp-tbl a { color: inherit; }
+#dash-root .rp-bar { position: relative; height: .5rem; background: var(--cds-chart-grid); border-radius: 999px; min-width: 4rem; }
+#dash-root .rp-bar span { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--cds-chart-muted); }
+#dash-root .rp-bar span.rp-crit { background: var(--cds-chart-status-critical); }
+#dash-root .rp-bar span.rp-ok { background: var(--color-ok); }
+#dash-root .rp-chart { position: relative; min-height: 260px; }
+#dash-root .rp-stages { position: relative; min-height: 420px; }
+#dash-root .rp-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+#dash-root .rp-tip .rp-tip-d { color: var(--cds-text-secondary); }
+#dash-root .rp-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rp-legend i { display: inline-block; width: .75rem; height: .2rem; border-radius: 2px; margin-right: .35rem; vertical-align: middle; }
+#dash-root .rp-chips { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+#dash-root .rp-chips button { font: inherit; font-size: var(--cds-font-size-caption); background: none; border: 1px solid var(--color-border-line); border-radius: 999px; padding: 0 var(--cds-pad-sm); color: var(--color-fg-muted); cursor: pointer; }
+#dash-root .rp-chips button[aria-pressed="true"] { color: var(--color-fg); border-color: var(--color-fg); }
+#dash-root [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+#dash-root [data-dash-source-state=empty] { color: transparent; }
+#dash-root .rp-fail { display: flex; align-items: center; justify-content: center; gap: .4rem; min-height: 4rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+#dash-root .rp-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+#dash-root .rp-legendbox { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+#dash-root .rp-legendbox summary { cursor: pointer; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+#dash-root .rp-legendbox h3 { margin: var(--cds-gap-lg) 0 var(--cds-gap-xs); font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+#dash-root .rp-legendbox p, #dash-root .rp-legendbox li, #dash-root .rp-legendbox dd { font-size: var(--cds-font-size-caption); line-height: 1.55; max-width: 85ch; }
+#dash-root .rp-legendbox p { margin: 0 0 var(--cds-gap-xs); }
+#dash-root .rp-legendbox ul { margin: 0; padding-left: 1.2rem; }
+#dash-root .rp-legendbox dl { margin: 0; display: grid; grid-template-columns: minmax(8rem, max-content) 1fr; gap: var(--cds-gap-xs) var(--cds-gap-md); }
+#dash-root .rp-legendbox dt { font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); }
+#dash-root .rp-legendbox dd { margin: 0; color: var(--color-fg-muted); }
+@media (max-width: 520px) { #dash-root .rp-legendbox dl { grid-template-columns: 1fr; } #dash-root .rp-legendbox dd { margin-bottom: var(--cds-gap-sm); } }
+#dash-root .rp-was { opacity: .85; }
+#dash-root .rp-delta { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); }
+#dash-root .rp-dnum.rp-good, #dash-root .rp-delta.rp-good { color: var(--color-ok); } #dash-root .rp-dnum.rp-bad { color: var(--color-bad); } #dash-root .rp-now b { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); } #dash-root .rp-delta.rp-bad { color: var(--color-bad); }
+#dash-root .rp-legendlink { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .seg { display: inline-flex; align-self: flex-start; padding: 3px; gap: 2px; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; font-family: var(--font-anthropic-sans); }
+#dash-root .seg a, #dash-root .seg span { display: inline-flex; align-items: center; gap: .4rem; padding: var(--cds-pad-xs) var(--cds-pad-lg); border-radius: 999px; font-size: var(--cds-font-size-body); text-decoration: none; color: var(--color-fg-muted); line-height: 1.4; }
+#dash-root .seg span[aria-current] { background: var(--color-fg); color: var(--color-bg); font-weight: var(--cds-font-weight-medium); }
+#dash-root .seg a:hover { color: var(--color-fg); background: var(--cds-chart-grid); }
+#dash-root .seg a:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+
+/* фирменный цвет отчёта */
+#dash-root .rp { --tint: #2f9e5f; --tint-bg: color-mix(in srgb, var(--tint) 10%, var(--color-bg)); --tint-panel: color-mix(in srgb, var(--tint) 5%, var(--color-panel)); --tint-line: color-mix(in srgb, var(--tint) 28%, var(--color-border-line));
+  background: var(--tint-bg); border-radius: calc(var(--cds-radius) * 2); padding: var(--cds-pad-xl) max(var(--cds-pad-lg), 1rem); }
+#dash-root .rp-tile, #dash-root .rp-card, #dash-root .rp-legendbox { background: var(--tint-panel); border-color: var(--tint-line); }
+#dash-root .rp-tbl th { background: var(--tint-panel); }
+#dash-root .rp .seg { background: var(--tint-panel); border-color: var(--tint-line); }
+#dash-root .rp .seg span[aria-current] { background: var(--tint); color: #fff; }
+#dash-root .rp [aria-pressed="true"] { background: var(--tint) !important; border-color: var(--tint) !important; color: #fff !important; }
+#dash-root .rp button { border-color: var(--tint-line); }
+#dash-root .rp-head h1 { color: color-mix(in srgb, var(--tint) 55%, var(--color-fg)); }
+
+/* ===== брендинг Fulfillment-Box ===== */
+#dash-root .rp { --tint:#d03040; --tint-bg:#fafafa; --tint-panel:#fff; --tint-line:#ececec; --brand:#d03040;
+  font-family:"Inter","Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; background:#fafafa; border-radius:32px; padding:clamp(16px,3vw,40px); color:#111; }
+#dash-root .rp-brand { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding-bottom:.4rem; }
+#dash-root .rp-brand img { height:42px; width:auto; display:block; mix-blend-mode:multiply; }
+#dash-root .rp-brand .rp-tag { font-size:.8rem; color:#6b7280; border:1px solid #e5e5e5; border-radius:999px; padding:.35rem .9rem; background:#fff; }
+#dash-root .rp-head h1 { font-family:inherit; font-weight:800; font-size:clamp(1.8rem,4.2vw,3.2rem); line-height:1.05; letter-spacing:-.02em; color:#0b0b0b; }
+#dash-root .rp-head h1 span { font-weight:300; color:#6b6b6b; }
+#dash-root .rp-take { color:#555; } #dash-root .rp-take b { color:#0b0b0b; }
+#dash-root .rp-tile, #dash-root .rp-card, #dash-root .rp-legendbox { background:#fff; border:1px solid #ececec; border-radius:24px; box-shadow:0 10px 30px -18px rgba(0,0,0,.22); }
+#dash-root .rp-num { font-family:inherit; font-weight:800; letter-spacing:-.02em; }
+#dash-root .rp-sec > h2, #dash-root .rp-card h3 { font-weight:700; letter-spacing:-.01em; }
+#dash-root .rp-mgrs button, #dash-root .seg { background:#fff; border:1px solid #e3e3e3; border-radius:999px; }
+#dash-root .rp-mgrs button { padding:.5rem 1.1rem; font-weight:500; color:#111; transition:background .15s,color .15s; }
+#dash-root .rp-mgrs button:hover { border-color:var(--brand); }
+#dash-root .rp [aria-pressed="true"], #dash-root .rp .seg span[aria-current] { background:var(--brand) !important; border-color:var(--brand) !important; color:#fff !important; }
+#dash-root .rp .seg { background:#fff; border-color:#e3e3e3; }
+#dash-root .rp-pick select { border-radius:999px; background:#fff; border-color:#e3e3e3; padding:.45rem 1rem; }
+#dash-root .rp-tbl th { background:#fff; color:#6b6b6b; font-weight:600; }
+#dash-root .rp-tbl td, #dash-root .rp-tbl th { border-bottom:1px solid #f0f0f0; }
+</style>
+
+<div class="rp">
+  <header class="rp-head" id="top">
+    <div class="rp-brand"><img alt="Fulfillment-Box" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAABQCAYAAABRVh3eAAAMTGlDQ1BJQ0MgUHJvZmlsZQAAeJyVVwdYU8kWnltSIQQIREBK6E0QkRJASggt9I4gKiEJEEqMCUHFjiy7gmsXEazoKkXR1RWQxYa6NhbF3hcLKsq6uC525U0IoMu+8r35vrnz33/O/HPOuXPvnQGA3sWXSnNRTQDyJPmy2GB/1uTkFBbpGSACQ1hpQI0vkEs50dHhAJbh9u/l9TWAKNvLDkqtf/b/16IlFMkFACDREKcL5YI8iH8CAG8VSGX5ABClkDeflS9V4rUQ68iggxDXKHGmCrcqcboKXxy0iY/lQvwIALI6ny/LBECjD/KsAkEm1KHDaIGTRCiWQOwHsU9e3gwhxIsgtoE2cE66Up+d/pVO5t8000c0+fzMEayKZbCQA8RyaS5/zv+Zjv9d8nIVw3NYw6qeJQuJVcYM8/YoZ0aYEqtD/FaSHhkFsTYAKC4WDtorMTNLEZKgskdtBHIuzBlgQjxJnhvHG+JjhfyAMIgNIc6Q5EaGD9kUZYiDlDYwf2iFOJ8XD7EexDUieWDckM0x2YzY4XmvZci4nCH+KV826INS/7MiJ4Gj0se0s0S8IX3MsTArPgliKsQBBeLESIg1II6U58SFDdmkFmZxI4dtZIpYZSwWEMtEkmB/lT5WniELih2yr8uTD8eOHcsS8yKH8KX8rPgQVa6wRwL+oP8wFqxPJOEkDOuI5JPDh2MRigICVbHjZJEkIU7F43rSfP9Y1VjcTpobPWSP+4tyg5W8GcTx8oK44bEF+XBxqvTxEml+dLzKT7wymx8arfIH3wfCARcEABZQwJoOZoBsIO7obeqFd6qeIMAHMpAJRMBhiBkekTTYI4HXOFAIfodIBOQj4/wHe0WgAPKfRrFKTjzCqa4OIGOoT6mSAx5DnAfCQC68VwwqSUY8SASPICP+h0d8WAUwhlxYlf3/nh9mvzAcyIQPMYrhGVn0YUtiIDGAGEIMItriBrgP7oWHw6sfrM44G/cYjuOLPeExoZPwgHCV0EW4OV1cJBvlZQTogvpBQ/lJ/zo/uBXUdMX9cW+oDpVxJm4AHHAXOA8H94Uzu0KWO+S3MiusUdp/i+CrJzRkR3GioJQxFD+KzeiRGnYariMqylx/nR+Vr+kj+eaO9Iyen/tV9oWwDRttiX2HHcBOY8exs1gr1gRY2FGsGWvHDivxyIp7NLjihmeLHfQnB+qMXjNfnqwyk3Kneqcep4+qvnzR7Hzly8idIZ0jE2dm5bM48I8hYvEkAsdxLGcnZzcAlP8f1eftVczgfwVhtn/hlvwGgPfRgYGBn79woUcB+NEdfhIOfeFs2PDXogbAmUMChaxAxeHKCwF+Oejw7dMHxsAc2MB4nIEb8AJ+IBCEgigQD5LBNOh9FlznMjALzAOLQQkoAyvBOlAJtoDtoAbsAftBE2gFx8Ev4Dy4CK6C23D1dIPnoA+8Bh8QBCEhNISB6CMmiCVijzgjbMQHCUTCkVgkGUlDMhEJokDmIUuQMmQ1UolsQ2qRH5FDyHHkLNKJ3ETuIz3In8h7FEPVUR3UCLVCx6NslIOGofHoVDQTnYkWosXocrQCrUZ3o43ocfQ8ehXtQp+j/RjA1DAmZoo5YGyMi0VhKVgGJsMWYKVYOVaNNWAt8DlfxrqwXuwdTsQZOAt3gCs4BE/ABfhMfAG+DK/Ea/BG/CR+Gb+P9+GfCTSCIcGe4EngESYTMgmzCCWEcsJOwkHCKfgudRNeE4lEJtGa6A7fxWRiNnEucRlxE3Ev8Rixk/iQ2E8ikfRJ9iRvUhSJT8onlZA2kHaTjpIukbpJb8lqZBOyMzmInEKWkIvI5eQ68hHyJfIT8geKJsWS4kmJoggpcygrKDsoLZQLlG7KB6oW1ZrqTY2nZlMXUyuoDdRT1DvUV2pqamZqHmoxamK1RWoVavvUzqjdV3unrq1up85VT1VXqC9X36V+TP2m+isajWZF86Ol0PJpy2m1tBO0e7S3GgwNRw2ehlBjoUaVRqPGJY0XdArdks6hT6MX0svpB+gX6L2aFE0rTa4mX3OBZpXmIc3rmv1aDK0JWlFaeVrLtOq0zmo91SZpW2kHagu1i7W3a5/QfsjAGOYMLkPAWMLYwTjF6NYh6ljr8HSydcp09uh06PTpauu66Cbqztat0j2s28XEmFZMHjOXuYK5n3mN+X6M0RjOGNGYpWMaxlwa80ZvrJ6fnkivVG+v3lW99/os/UD9HP1V+k36dw1wAzuDGINZBpsNThn0jtUZ6zVWMLZ07P6xtwxRQzvDWMO5htsN2w37jYyNgo2kRhuMThj1GjON/YyzjdcaHzHuMWGY+JiITdaaHDV5xtJlcVi5rArWSVafqaFpiKnCdJtph+kHM2uzBLMis71md82p5mzzDPO15m3mfRYmFhEW8yzqLW5ZUizZllmW6y1PW76xsrZKsvrWqsnqqbWeNc+60Lre+o4NzcbXZqZNtc0VW6It2zbHdpPtRTvUztUuy67K7oI9au9mL7bfZN85jjDOY5xkXPW46w7qDhyHAod6h/uOTMdwxyLHJscX4y3Gp4xfNf70+M9Ork65Tjucbk/QnhA6oWhCy4Q/ne2cBc5Vzlcm0iYGTVw4sXniSxd7F5HLZpcbrgzXCNdvXdtcP7m5u8ncGtx63C3c09w3ul9n67Cj2cvYZzwIHv4eCz1aPd55unnme+73/MPLwSvHq87r6STrSaJJOyY99Dbz5ntv8+7yYfmk+Wz16fI19eX7Vvs+8DP3E/rt9HvCseVkc3ZzXvg7+cv8D/q/4Xpy53OPBWABwQGlAR2B2oEJgZWB94LMgjKD6oP6gl2D5wYfCyGEhIWsCrnOM+IJeLW8vlD30PmhJ8PUw+LCKsMehNuFy8JbItCI0Ig1EXciLSMlkU1RIIoXtSbqbrR19Mzon2OIMdExVTGPYyfEzos9HceImx5XF/c63j9+RfztBJsERUJbIj0xNbE28U1SQNLqpK7J4yfPn3w+2SBZnNycQkpJTNmZ0j8lcMq6Kd2prqklqdemWk+dPfXsNINpudMOT6dP508/kEZIS0qrS/vIj+JX8/vTeekb0/sEXMF6wXOhn3CtsEfkLVotepLhnbE642mmd+aazJ4s36zyrF4xV1wpfpkdkr0l+01OVM6unIHcpNy9eeS8tLxDEm1JjuTkDOMZs2d0Su2lJdKumZ4z183sk4XJdsoR+VR5c74O3Oi3K2wU3yjuF/gUVBW8nZU468BsrdmS2e1z7OYsnfOkMKjwh7n4XMHctnmm8xbPuz+fM3/bAmRB+oK2heYLixd2LwpeVLOYujhn8a9FTkWri/5akrSkpdioeFHxw2+Cv6kv0SiRlVz/1uvbLd/h34m/61g6cemGpZ9LhaXnypzKyss+LhMsO/f9hO8rvh9YnrG8Y4Xbis0riSslK6+t8l1Vs1prdeHqh2si1jSuZa0tXfvXuunrzpa7lG9ZT12vWN9VEV7RvMFiw8oNHyuzKq9W+Vft3Wi4cenGN5uEmy5t9tvcsMVoS9mW91vFW29sC97WWG1VXb6duL1g++MdiTtO/8D+oXanwc6ynZ92SXZ11cTWnKx1r62tM6xbUY/WK+p7dqfuvrgnYE9zg0PDtr3MvWX7wD7Fvmc/pv14bX/Y/rYD7AMNP1n+tPEg42BpI9I4p7GvKaupqzm5ufNQ6KG2Fq+Wgz87/ryr1bS16rDu4RVHqEeKjwwcLTzaf0x6rPd45vGHbdPbbp+YfOLKyZiTHafCTp35JeiXE6c5p4+e8T7Tetbz7KFz7HNN593ON7a7th/81fXXgx1uHY0X3C80X/S42NI5qfPIJd9Lxy8HXP7lCu/K+auRVzuvJVy7cT31etcN4Y2nN3NvvrxVcOvD7UV3CHdK72reLb9neK/6N9vf9na5dR2+H3C//UHcg9sPBQ+fP5I/+thd/Jj2uPyJyZPap85PW3uCei4+m/Ks+7n0+Yfekt+1ft/4wubFT3/4/dHeN7mv+6Xs5cCfy17pv9r1l8tfbf3R/fde573+8Kb0rf7bmnfsd6ffJ71/8mHWR9LHik+2n1o+h32+M5A3MCDly/iDWwEMKI82GQD8uQsAWjIADHhupE5RnQ8HC6I60w4i8J+w6gw5WODOpQHu6WN64e7mOgD7dgBgBfXpqQBE0wCI9wDoxIkjdfgsN3juVBYiPBtsjfuUnpcO/k1RnUm/8nt0C5SqLmB0+y+1iIL5enyQTwAADFJJREFUeJztnT2v3cYRhldBGolqBLt17SZVWpNsVLF1IaQSkLhQlR9AEkhhgDyVAAGu49pI4ZZQSx63RgoLkOuUikvZwG1uipuhh3NmyV1+85z3AQTde0nuF4cvZ2eXu4/u7u7uDQAAgNX4w9YFAACAWwPCCwAAKwPhBQCAlYHwAgDAykB4AQBgZSC8AACwMhBeAABYGQgvAACsDIQXAABWBsILAAAr80efk3/59rulyrFbPvnbX7YuAgDgynjks1bDz198uWRZdsnnP3y/dREAAFcGQg0AALAyEF6FJ3/+09ZFAABcMRBewWfffL11EQAAVw6El/HZN1/D2wUALA6E9/9AdAEAawHhNRBdAMC63LzwQnQBAGtz08IL0QUAbIHXl2vXBEQXgOuiruv25ziONyzJMDcpvGuLbl3X5nQ6eV9XVZUxxpiyLE3TNJ1jaZpajStJEmtatvT48T60a4eIoshkWWaMMebly5fm/fv3neOn08k8f/7cGKO3VV9dJbLuPO8hfNuZ41Ju7b4MwdOYagfUFmPtkXC1FY6r3URRZIwxzveM6sJFl5PnuTU97X7Y7MXWZj62ybk54d3K07UZxtjr0zQdnVfTNJPKM+XaZ8+emXfv3nX+9vjx4970oyhyNu4pZbO1i0ve2sMvyz2mbPw++5avL7+p9uiLq83ROUVRmDzPewU4SZLBNIuiaH+WaaVpeiG+dV2bMAwv2vR8Pl/klef5aM/6pmK8CC8AX+q6Hny4y7JcXciIuq5NWZab5L00RVGo7VrXtQmCwKvNi6K4uCaOY1U4pWdblmVHwAlXr1zjZoQXogvGMhQi0B7KNbEJ1DWgde/HhGxs6WlhE/ky0+4vhTDGsnioYQ9i98lfX+yiHJKpN28vxHHcxuY0wjBcsTTLkCSJ+pBO9TaH4qWuXdnT6eTV7dVsbwmB6ePjx4+d322epTxHg2yQbO18PqvhDRJV7q1WVXUh5kVRmDAMzfl8vshrKATiwqLC++lXL7CerYU4jiffvL3gM4B1VCjkwMXNRSiGmGv0XROUvjy1fGVd1rZR7QUtX+i2l4MsJx+QlNeQqNI51B5SpG2e9RxtslioAaILrg3NK9oTRw85aN4lx+bt9glhlmVOLzfXmRpz9QAW8Xghum70PSR7n4fIGRqxPlJdhiCvcq4Brb545ZipSr4hhy3RZhRwXDxuFyGMougi7fP5fNFOWshB5jVXD2B24YXoujE0Wl5V1WEeoKG6yFjekSmKYvJ0PE5fOi7T6GQX2SfksDV9dddETpsH7DJ+oJ2jpWULORBztumsoQaILrg2NI9q7FzfJdC6yEcPORjzUIctpsn1DRLP2aazebwQXXCNZFk26OHmeW7CMNxM7LQu8pQv04Z49eqV03mvX782T58+HZ0PxdCneppa7FgT2KHB0jnDOLMIL0QXXDNpmvaKKn2GO4Yxn99KtC7yki+Bt2/fmg8fPgye9+bNm97jMgSlff7LZyBosdo5xXBosHTOMM5k4fUR3V9//Mn89u+fpmZ5wRFFP47jSQ+dNjjQl9eSzDnosEfiODZ5ni8yz3Wue1NVlQmCYJa0toLawvbS0GK12jQ/iXbfZFpaWEOL98qpaGOZJLw+ovvLt9+Z//7zX1OyU7mFPdI0gyuKQhU7zYD64lbADS3ksLcXztCo/BHQwgLkZPTNt9UGo20L28h5zLYQA7XnEl72aOHdi+ju8Yu0ubHd5CAIOh7XlNH2oQd27CpMc0AzCfqw9R7qup6tbnJhojlEd8527/PM50QucmRDLn4k0QRNs1/ueNjCPkmStOEIshXbs+D6UYYxek9ijpDDKOGF6K6P7YEaeshcvz4aEmyfFcKWYMnV1PpWeuPYvviawtzt7jIYOJW5Qhqu3jmvf9+UL5cFjWQvReshynO0Z29qyMF7OhlEdxuyLBsVT5xj8AYcC9cXyRHQ7LeqqlHPgia6LvFf29dvU2aOeAkvRHdbfMR36uAdOC4UcjgyZL82j3LMsyB7frYQg5an9jKbsiSnV6gBojseaSRjV+zKsqzzySp1K8lYaIWmvi5QFEXeA25U3jAMJ9XlyZMnF0Z8f3/f+X2KaIy5lrfdlIHIoXYZUzaehk/5tPDS0H2ay0Y1XMpO+bl237VnQWKLkdd1rd4PW1hu7pfZo7u7u/vh09y5BtH9z9//YX798WHa2+c/fL9KngCA22HWT4avQXQBAGBpZhNeiC4AALgxi/BCdAEAwJ3JwgvRBQAAPyYJL0QXAAD8GS28EF0AABjHKOGF6AIAwHi8hReiCwAA0/ASXoguAABMx0t4IbrT6Fs9yWVlJdt1a63Burd9vJZoz6Uoy3KTPcRs9LXNntpNoyzL3ZdxiFm/XPPllkSXsIlkkiTqItAurGWEp9OpIx57EBJtoWpjHso6tj2XYmhN4TU5nU6qLZZlufvF1Jum2d299WUz4b1F0bVtbUICtqfdDDTkCk9LL7g9BK3Nqi3PV9f1rIu8XBt9+8gdfWWzI7CJ8N6i6BI2oeDGTuGDJEkuvErqZsljfdfYjlH3V3o59LvsHlPe/HzyOLWQB+8Syms1b5mX0bU7qS3XR2nzVam0+lOZ+f8u5bS1D0/Tdi1Pg47LuvK2lGW02QQvj4vHanMC5Mu0z3akHfrYIM+Xp+Vjv0dmdeG9ZdE1Rvc0pLEnSWKiKGpFhT9ITdO0x7lHdzqdTJqmJooiUxRFR/DofNoWhRsvbatDS/aVZWmapmnz5mlRFy/LsvY4Fz5ZL94lpHLTNfx3Y37f1YDn69KdpN0IeN5N03ReZDJtni/ty8WXD+TllOfLY1pbp2na1tEm3E3TtL0Hresshbjv/hZFYdI0NWEYeu0+IZ0A2fMqy9KaL79/ZId9duti07zd+q49enzXmJm2d3fl1kXXmO7WJXEcq8bOV8qP47j1eEgY+HEyQlr0PI5j0zRNZ0M+eX6SJJ30+YLpRVG0225rafF68P9dHga5AwD36rQ6uEICwstCaZVl2aljHMcmCIJOeeWC8Xy7JH5+HMcdgdbKKRfSlr0bEkq5tfkQtrYpiuIiT1dhStP0wjvmLyyetotdGWM67cZfOnxR8ziOWxHnadHP5/O5raN8PnxtY6+sJrwQ3d9J0/TCgAnufXJ8djblG/4VRdGK9xD08Kw9uOKzVb0GFxB6cXGmzvyQZZMvDNoXrSiKjojLPdpctiJ3hbfZ2Fi2dAL4C0HzbIfSyvO8swGrHLOQ7ebKNcacVxFeiO4l9BDKh1Vjyq4ItPOq3Km1j7X37KIu8li4p0teGtE0TeupEmPqR0KXJEnH0+Oi5CKotHHiXAI8lSiK2hkgrlve2JA7QtC26/xnysNnw8xr8HAli8d4IbqXyNF4bvDcWyXGzB7gYk3iw//ZyiXLKP9uwyfkoDE1bse9eu5pkXDIuvuIHs2QkN1prdw8tCA9bQph5Hl+EYLg99xnqlQcx53zfadZUb1kT0uzhT7b4fuPkQCTc0EvmTEvGs2bR4x3AIiuHeoey25UlmUmCILOPlIyNqpBXTwaXKEuI+XD04uiyJpenuedcpEHaTu/LMt2jzd6mVCMrq5rJ29ddlPltS7T7WjQUrYnlYkGaGT7aHARofbngs3TkmXQ2lqSZVk7Sl9VVec6X++Oh1m0a2nQqu9lS+EG2fOStjBkO3wwkb/sSXzH1E+7f5yjTMWULObxQnT7IbHRDIaLQpqmnXNk2MCYhweEromi6CLOaEsvDMOLrqTcvZXP3ZV5ywe1qqpWaNI0NXmet+fbyq3lK4UiDMPBOCa1p3aeLBdvDy1+yPOW7d9XR5+2ppkCvOz0d0rXVkbelnzgkK6V5w55mmmaquGuLMus9ZH3Uw7S8jR5u9DsBF4nmZZsq742d7GNPeK12eXPX3zpdN7RRRebXa6PjHkGQdC7vfdSkFc2FHffC3Vdt1P8jDmuB3hrzO7xHl10wTacz2cTBIFJkqQNOexh8OkIFEXRhi6apjmkB3hrzOrxXovowuPdjj2M9u+hDL7QgNPRyn2rzDa4di2iC7ZlD8KxhzL4csQy3zKzhBogugAA4M5k4YXoAgCAH5OEF6ILAAD+jI7xfvrVC2OMaQehAAAAuDFaeB+2AZp/KyAAALh2Nt36BwAAbhEvj5fCCwAAAMbj9QEFAACA6SDUAAAAKwPhBQCAlYHwAgDAykB4AQBgZSC8AACwMhBeAABYmf8BF4CgySZvCGcAAAAASUVORK5CYII="><span class="rp-tag">Отдел продаж</span></div>
+    <nav class="seg" aria-label="Отчёт"><span aria-current="page">Ежедневный</span><a href="https://claude.ai/artifact/KWcKFfGbWZdPn5weFKwKFe" target="_blank" rel="noopener">Ежемесячный</a></nav>
+    <div>
+      <h1>SALES DEPARTMENT <span>по дням</span></h1>
+      <a class="rp-legendlink" href="#legend" id="legend-link">Как мы считаем ↓</a>
+      <p class="rp-take" id="takeaway"><span class="dash-skeleton">—</span></p>
+    </div>
+    <div class="rp-mgrs" id="rp-periods" role="group" aria-label="Период" data-source="svod"></div>
+    <div class="rp-controls" id="rp-custom" hidden>
+      <label class="rp-pick" for="rp-from">С даты
+        <select id="rp-from" data-source="svod"></select>
+      </label>
+      <label class="rp-pick" for="rp-date">По дату
+        <select id="rp-date" data-source="svod"></select>
+      </label>
+    </div>
+    <div class="rp-mgrs" id="rp-mgrs" role="group" aria-label="Менеджер" data-source="mgr_day"></div>
+  </header>
+
+  <section class="rp-sec" id="now">
+    <h2 id="now-title">Сейчас в воронке</h2>
+    <p>Крупно — насколько изменилось за выбранный период (зелёным — к лучшему, красным — к худшему). Под ним — сколько сейчас и сколько было в начале периода. Живая воронка — сделки, с которыми ещё работают. Отказы, «перестал отвечать», нецелевые, спам, «прочее» и обращения действующих клиентов в неё не входят. «Подключение к YSELL» — успех.</p>
+    <div class="rp-tiles">
+      <div class="rp-tile"><span class="rp-lbl">Живая воронка</span><span class="rp-num rp-dnum dash-skeleton" data-source="mgr_delta" data-field="Δ Живая воронка">—</span><span class="rp-sub">с <span class="rp-adate">—</span></span><span class="rp-sub rp-now">сейчас <b data-source="mgr_day" data-field="Живая воронка">—</b> · было <span data-source="mgr_dayA" data-field="Живая воронка">—</span></span></div>
+      <div class="rp-tile"><span class="rp-lbl">Зависшие (&gt; 7 дн.)</span><span class="rp-num rp-dnum dash-skeleton" data-source="mgr_delta" data-field="Δ Зависшие">—</span><span class="rp-sub">с <span class="rp-adate">—</span></span><span class="rp-sub rp-now">сейчас <b data-source="mgr_day" data-field="Зависшие">—</b> (<span data-source="mgr_day" data-field="Доля зависших">—</span>) · было <span data-source="mgr_dayA" data-field="Зависшие">—</span></span></div>
+      <div class="rp-tile"><span class="rp-lbl">Подключены к YSELL</span><span class="rp-num rp-dnum dash-skeleton" data-source="mgr_delta" data-field="Δ Подключены к YSELL">—</span><span class="rp-sub">с <span class="rp-adate">—</span></span><span class="rp-sub rp-now">сейчас <b data-source="mgr_day" data-field="Подключены к YSELL">—</b> · было <span data-source="mgr_dayA" data-field="Подключены к YSELL">—</span></span></div>
+      <div class="rp-tile"><span class="rp-lbl">Отказ / перестал отвечать</span><span class="rp-num rp-dnum dash-skeleton" data-source="mgr_delta" data-field="Δ Отказ и перестал отвечать">—</span><span class="rp-sub">с <span class="rp-adate">—</span></span><span class="rp-sub rp-now">сейчас <b data-source="mgr_day" data-field="Отказ и перестал отвечать">—</b> · было <span data-source="mgr_dayA" data-field="Отказ и перестал отвечать">—</span></span></div>
+      <div class="rp-tile"><span class="rp-lbl">На квалификации &gt; 1 дня</span><span class="rp-num rp-dnum dash-skeleton" data-source="mgr_delta" data-field="Δ На квалификации больше дня">—</span><span class="rp-sub">с <span class="rp-adate">—</span></span><span class="rp-sub rp-now">сейчас <b data-source="mgr_day" data-field="На квалификации больше дня">—</b> · было <span data-source="mgr_dayA" data-field="На квалификации больше дня">—</span></span></div>
+    </div>
+  </section>
+
+  <section class="rp-sec" id="period">
+    <h2 id="period-title">За период</h2>
+    <p>Сравнение двух срезов: что стало со сделками между датами. База менеджера = живая воронка на начало + новые лиды за период. Проценты — доля от этой базы.</p>
+    <div class="rp-tiles">
+      <div class="rp-tile"><span class="rp-lbl">Новых лидов</span><span class="rp-num dash-skeleton" data-source="period" data-field="Новых лидов">—</span></div>
+      <div class="rp-tile"><span class="rp-lbl">Подключено к YSELL</span><span class="rp-num dash-skeleton" data-source="period" data-field="Подключено к YSELL">—</span><span class="rp-sub">конверсия <span data-source="period" data-field="Конверсия">—</span></span></div>
+      <div class="rp-tile"><span class="rp-lbl">Продвинуто в горячие</span><span class="rp-num dash-skeleton" data-source="period" data-field="В горячие">—</span><span class="rp-sub"><span data-source="period" data-field="Доля в горячие">—</span> от базы</span></div>
+      <div class="rp-tile"><span class="rp-lbl">Ушло в отказ / перестал отвечать</span><span class="rp-num dash-skeleton" data-source="period" data-field="Отказ / перестал отвечать">—</span><span class="rp-sub"><span data-source="period" data-field="Доля отказ">—</span> от базы</span></div>
+      <div class="rp-tile"><span class="rp-lbl">Без движения весь период</span><span class="rp-num dash-skeleton" data-source="period" data-field="Без движения">—</span><span class="rp-sub"><span data-source="period" data-field="Доля без движения">—</span> от базы</span></div>
+      <div class="rp-tile"><span class="rp-lbl">Касаний клиентов</span><span class="rp-num dash-skeleton" data-source="act_period" data-field="Касаний">—</span><span class="rp-sub"><span data-source="act_period" data-field="Касаний в день">—</span> в день, <span data-source="act_period" data-field="На живую сделку">—</span> на живую сделку</span></div>
+      <div class="rp-tile"><span class="rp-lbl">Первая реакция на новый лид</span><span class="rp-num dash-skeleton" data-source="speed" data-field="Реакция, мин (медиана)">—</span><span class="rp-sub">мин (медиана); без касания — <span data-source="speed" data-field="Без касания">—</span> из <span data-source="speed" data-field="Новых">—</span></span></div>
+    </div>
+    <details class="rp-card rp-fold" id="period-managers">
+      <summary><h3>Эффективность менеджеров за период</h3><span class="rp-more">подробнее</span></summary>
+      <p class="rp-note">% от базы менеджера (наведи на ячейку — увидишь число сделок). Красным — конверсия в YSELL ниже средней по команде (при базе 5+ сделок).</p>
+      <div class="rp-tbl"><table data-source="period" data-row-key="Менеджер"><thead><tr>
+        <th data-field="Менеджер">Менеджер</th><th class="rp-n" data-field="База">База</th><th data-field="Конверсия">Конверсия в YSELL</th><th class="rp-n" data-field="Доля в горячие">В горячие, %</th><th class="rp-n" data-field="Доля отказ">Отказ / перестал, %</th><th class="rp-n" data-field="Доля мусор">Мусор, %</th><th class="rp-n" data-field="Доля без движения">Без движения, %</th><th class="rp-n" data-field="Новых лидов">Новых лидов</th>
+      </tr></thead><tbody></tbody></table></div>
+    </details>
+    <details class="rp-card rp-fold" id="period-activity">
+      <summary><h3>Активность и скорость реакции за период</h3><span class="rp-more">подробнее</span></summary>
+      <p class="rp-note">Касание — исходящий звонок, письмо, сообщение в чате или встреча в Битриксе. Первая реакция — минуты от поступления нового лида до первого касания. Работа вне Битрикса (личная почта, мобильный, личный WhatsApp) сюда не попадает.</p>
+      <div class="rp-tbl"><table data-source="act_period" data-row-key="Менеджер"><thead><tr>
+        <th data-field="Менеджер">Менеджер</th><th class="rp-n" data-field="Касаний">Касаний</th><th class="rp-n" data-field="Касаний в день">В день</th><th class="rp-n" data-field="На живую сделку">На живую сделку</th><th class="rp-n" data-field="Звонков">Звонки</th><th class="rp-n" data-field="Писем">Письма</th><th class="rp-n" data-field="Чатов">Чаты</th><th class="rp-n" data-source="speed" data-field="Новых">Новых лидов</th><th class="rp-n" data-source="speed" data-field="Реакция, мин (медиана)">Реакция, мин</th><th class="rp-n" data-source="speed" data-field="Без касания">Без касания</th>
+      </tr></thead><tbody></tbody></table></div>
+    </details>
+    <details class="rp-card rp-fold" id="period-workday">
+      <summary><h3 id="workday-title">Рабочий день менеджеров</h3><span class="rp-more">подробнее</span></summary>
+      <p class="rp-note">Последний рабочий день перед концом периода. Вся работа должна быть в Битриксе: чего нет в CRM — того не было. Оценка дня: 5 баллов, минус 1 за каждое — начал позже 10:30, закончил раньше 17:00, пауза больше 90 мин, касаний меньше половины медианы команды (и ещё минус 1, если меньше четверти). Минимум 1. Для квалификатора объём не оценивается.</p>
+      <div class="rp-tbl"><table data-source="workday" data-row-key="Менеджер"><thead><tr>
+        <th data-field="Менеджер">Менеджер</th><th class="rp-n" data-field="Оценка">Оценка дня</th><th class="rp-n" data-field="Касаний">Касаний</th><th class="rp-n" data-field="Звонков">Звонки</th><th class="rp-n" data-field="Писем и чатов">Письма и чаты</th><th class="rp-n" data-field="Первое">Начал</th><th class="rp-n" data-field="Последнее">Закончил</th><th class="rp-n" data-field="Макс. пауза, мин">Макс. пауза, мин</th><th data-field="Обратить внимание">Обратить внимание</th>
+      </tr></thead><tbody></tbody></table></div>
+    </details>
+    <details class="rp-card rp-fold" id="period-deals">
+      <summary><h3>Что произошло со сделками</h3><span class="rp-more">подробнее</span></summary>
+      <div class="rp-chips" id="move-chips"></div>
+      <div class="rp-tbl"><table data-source="moves" data-row-key="key"><thead><tr>
+        <th data-field="Сделка">Сделка</th><th data-field="Итог">Итог</th><th data-field="Было">Было</th><th data-field="Стало">Стало</th><th data-field="Менеджер">Менеджер</th>
+      </tr></thead><tbody></tbody></table></div>
+    </details>
+  </section>
+
+  <section class="rp-sec" id="flags">
+    <h2>Красные флаги</h2>
+    <p>На выбранную дату. Сверху — свод, ниже каждый флаг раскрывается со списком сделок.</p>
+    <div class="rp-tiles" id="flag-sum">
+      <a class="rp-tile rp-jump" href="#flag-hot"><span class="rp-lbl">Горячие висят &gt; 7 дн.</span><span class="rp-num" data-k="hot">—</span></a>
+      <a class="rp-tile rp-jump" href="#flag-notouch"><span class="rp-lbl">Лиды без касания</span><span class="rp-num" data-k="notouch">—</span></a>
+      <a class="rp-tile rp-jump" href="#flag-nonext"><span class="rp-lbl">Без следующего шага</span><span class="rp-num" data-k="nonext">—</span></a>
+      <a class="rp-tile rp-jump" href="#flag-discipline"><span class="rp-lbl">Просрочено дел</span><span class="rp-num" data-k="overdue">—</span></a>
+      <a class="rp-tile rp-jump" href="#period-workday"><span class="rp-lbl">Оценка рабочего дня</span><span class="rp-num" data-k="score">—</span><span class="rp-sub" data-k="scoresub">—</span></a>
+    </div>
+    <div class="rp-grid">
+      <details class="rp-card rp-fold" id="flag-hot">
+        <summary><h3><span class="rp-count" data-source="hot_stuck">—</span> горячих сделок висят</h3><span class="rp-more">подробнее</span></summary>
+        <p class="rp-note">«Готов стать клиентом», «Подписание договора», «Оплата депозита» без движения больше 7 дней.</p>
+        <div class="rp-tbl"><table data-source="hot_stuck" data-row-key="key"><thead><tr><th data-field="Сделка">Сделка</th><th data-field="Стадия">Стадия</th><th class="rp-n" data-field="Дней на стадии">Дней</th><th data-field="Менеджер">Менеджер</th></tr></thead><tbody></tbody></table></div>
+      </details>
+      <details class="rp-card rp-fold" id="flag-notouch">
+        <summary><h3><span class="rp-count" data-source="no_touch">—</span> лидов без единого касания</h3><span class="rp-more">подробнее</span></summary>
+        <p class="rp-note">Живые сделки, пришедшие с 01.09, по которым в Битриксе нет ни одного исходящего звонка, письма, сообщения или встречи. На утро (выгрузка в 8–9).</p>
+        <div class="rp-tbl"><table data-source="no_touch" data-row-key="ID сделки"><thead><tr><th data-field="Сделка">Сделка</th><th data-field="Стадия сейчас">Стадия</th><th data-field="Поступила">Поступила</th><th data-field="Менеджер">Менеджер</th></tr></thead><tbody></tbody></table></div>
+      </details>
+      <details class="rp-card rp-fold" id="flag-nonext">
+        <summary><h3><span class="rp-count" data-source="no_next">—</span> сделок без следующего шага</h3><span class="rp-more">подробнее</span></summary>
+        <p class="rp-note">Живые сделки, по которым не запланировано ни одного дела (звонка, задачи, письма). На утро.</p>
+        <div class="rp-tbl"><table data-source="no_next" data-row-key="ID сделки"><thead><tr><th data-field="Сделка">Сделка</th><th data-field="Стадия сейчас">Стадия</th><th data-field="Последнее касание">Последнее касание</th><th data-field="Менеджер">Менеджер</th></tr></thead><tbody></tbody></table></div>
+      </details>
+      <details class="rp-card rp-fold" id="flag-discipline">
+        <summary><h3>Дисциплина по менеджерам</h3><span class="rp-more">подробнее</span></summary>
+        <p class="rp-note">На утро. «Перестал отвечать» — сделки, пришедшие с 01.09 и лежащие в этой стадии: сколько касаний было до того, как их туда перевели. Красным — у половины и больше было 0–1 касание.</p>
+        <div class="rp-tbl"><table data-source="discipline" data-row-key="Менеджер"><thead><tr><th data-field="Менеджер">Менеджер</th><th class="rp-n" data-field="Без следующего шага">Без след. шага</th><th class="rp-n" data-field="Просрочено дел">Просрочено дел</th><th class="rp-n" data-field="Перестал отвечать">«Перестал отвечать»</th><th class="rp-n" data-field="Касаний до свалки, медиана">Касаний до этого (медиана)</th><th class="rp-n" data-field="Доля с 0–1 касанием">С 0–1 касанием</th></tr></thead><tbody></tbody></table></div>
+      </details>
+      <details class="rp-card rp-fold" id="flag-managers">
+        <summary><h3>Завал по менеджерам</h3><span class="rp-more">подробнее</span></summary>
+        <p class="rp-note">Доля зависших в живой воронке менеджера. Красным — больше 70% при 5+ сделках.</p>
+        <div class="rp-tbl"><table data-source="mgr_day" data-row-key="Менеджер"><thead><tr><th data-field="Менеджер">Менеджер</th><th class="rp-n" data-field="Живая воронка">Живая</th><th class="rp-n" data-field="Зависшие">Зависших</th><th data-field="Доля зависших">Доля</th><th class="rp-n" data-field="Подключены к YSELL">YSELL</th><th class="rp-n" data-field="Отказ и перестал отвечать">Отказ / перестал</th><th class="rp-n" data-field="Мусор">Мусор</th></tr></thead><tbody></tbody></table></div>
+      </details>
+      <details class="rp-card rp-fold" id="flag-ghost">
+        <summary><h3><span class="rp-count" data-source="kpi" data-field="Доля перестал отвечать">—</span> воронки — «перестал отвечать»</h3><span class="rp-more">подробнее</span></summary>
+        <p class="rp-note">По всей команде, доля от сделок в работе без YSELL. Стадия превращается в свалку: сделки туда уходят и не дожимаются.</p>
+        <div class="rp-legend" id="ghost-legend"></div>
+        <div class="rp-chart" id="ghost-chart" data-source="kpi" style="min-height:200px"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="rp-sec" id="qual">
+    <h2>Квалификация и дубли — Юлия Мартынова</h2>
+    <p>Юлия — квалификатор, у неё свои правила эффективности: скорость квалификации в минутах, отсев мусора и объединение дублей. В конверсии и завале отдела продаж она не участвует. Время квалификации — от поступления лида в воронку до ухода со стадий «Новые»/«Квалификация», по всем лидам за период. Дубли — открытые сделки с одинаковым email в названии (кроме действующих клиентов).</p>
+    <div class="rp-tiles">
+      <div class="rp-tile"><span class="rp-lbl">Время квалификации, медиана</span><span class="rp-num dash-skeleton" data-source="speed" data-field="Квалификация, мин (медиана)">—</span><span class="rp-sub">мин за период; за 60 мин и быстрее — <span data-source="speed" data-field="Квалифицировано за 60 мин">—</span></span></div>
+      <div class="rp-tile"><span class="rp-lbl">Сейчас ждут квалификации</span><span class="rp-num dash-skeleton" data-source="qual_now" data-row="0" data-field="Ждут">—</span><span class="rp-sub">дольше всех — <span data-source="qual_now" data-row="0" data-field="Ждёт дольше всех, мин">—</span> мин (на утро)</span></div>
+      <div class="rp-tile"><span class="rp-lbl">Передано в продажи</span><span class="rp-num dash-skeleton" data-source="qual" data-row="0" data-field="Передано в продажи">—</span><span class="rp-sub">отсеяно в мусор — <span data-source="qual" data-row="0" data-field="Отсеяно в мусор">—</span></span></div>
+      <div class="rp-tile"><span class="rp-lbl">Возможных дублей</span><span class="rp-num dash-skeleton" data-source="qual" data-row="0" data-field="Групп дублей">—</span><span class="rp-sub">было <span data-source="qual" data-row="0" data-field="Групп дублей на начало">—</span> на начало периода</span></div>
+    </div>
+    <div class="rp-grid">
+      <details class="rp-card rp-fold" id="qual-queue">
+        <summary><h3>Очередь на квалификацию</h3><span class="rp-more">подробнее</span></summary>
+        <p class="rp-note">Лиды на «Новые» и «Квалификация» на момент утренней выгрузки, сколько минут ждут. Красным — больше 60 минут.</p>
+        <div class="rp-tbl"><table data-source="qual_list" data-row-key="ID сделки"><thead><tr><th data-field="Сделка">Сделка</th><th data-field="Стадия сейчас">Стадия</th><th class="rp-n" data-field="Минут на квалификации">Ждёт, мин</th><th data-field="Менеджер">Менеджер</th></tr></thead><tbody></tbody></table></div>
+      </details>
+      <details class="rp-card rp-fold" id="qual-dups">
+        <summary><h3>Возможные дубли</h3><span class="rp-more">подробнее</span></summary>
+        <div class="rp-tbl"><table data-source="dups" data-row-key="email"><thead><tr><th data-field="email">Email</th><th class="rp-n" data-field="Сделок">Сделок</th><th data-field="Сделки">Сделки</th><th data-field="Менеджеры">Менеджеры</th></tr></thead><tbody></tbody></table></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="rp-sec" id="trend">
+    <h2>Динамика воронки</h2>
+    <p>По всей команде. Каждая точка — срез на дату. «В работе» — без подключённых к YSELL. Пунктир — границы выбранного периода.</p>
+    <details class="rp-card rp-fold"><summary><h3>График по дням</h3><span class="rp-more">подробнее</span></summary>
+      <div class="rp-legend" id="trend-legend"></div>
+      <div class="rp-chart" id="trend-chart" data-source="kpi"></div>
+    </details>
+  </section>
+
+  <section class="rp-sec" id="stages">
+    <h2>Сделки по стадиям</h2>
+    <p>На выбранную дату и выбранного менеджера. Красным — горячие стадии и «Клиент перестал отвечать», зелёным — подключение к YSELL.</p>
+    <details class="rp-card rp-fold"><summary><h3>Сколько сделок на каждой стадии</h3><span class="rp-more">подробнее</span></summary><div class="rp-stages" id="stage-chart" data-source="day"></div></details>
+  </section>
+  <section class="rp-sec" id="legend">
+    <details class="rp-legendbox" id="legend-box">
+      <summary>Как мы считаем — легенда</summary>
+
+      <h3>Откуда данные</h3>
+      <ul>
+        <li>Источник — Битрикс24, воронка «FF-Box главная». Скрипт в Google-таблице «Отчет воронка FFB» (Расширения → Apps Script, функция <code>sendReport</code>) каждый будний день между 9:00 и 10:00 по Таллину выгружает воронку: добавляет строку в лист «Свод» и создаёт лист на дату (дд.мм.гггг). По выходным не запускается — этих дат нет.</li>
+        <li>Дни с 01.09 по 14.10 восстановлены задним числом функцией <code>backfillDailySheets</code> по истории переходов сделок между стадиями — срез на 14:15 каждого дня. Проверка: так же пересчитанный 15.10 совпал с настоящим отчётом.</li>
+        <li>Дашборд ничего не хранит: при каждом открытии читает «Свод» и листы двух выбранных дат. Видит его только тот, у кого есть доступ к таблице.</li>
+      </ul>
+
+      <h3>Группы стадий</h3>
+      <dl>
+        <dt>Живая воронка</dt><dd>Новые, Квалификация, Small сегмент, Ожидаем ответа, Клиент не ответил, В проработке, Ответ получен, РАЗБУДИТЬ, Готов стать клиентом, Подписание договора, Оплата депозита.</dd>
+        <dt>Горячие стадии</dt><dd>Готов стать клиентом, Подписание договора, Оплата депозита.</dd>
+        <dt>Успех</dt><dd>Подключение к YSELL (и «Сделка успешна»). Это успех отдела продаж, в «работе» и «зависших» не считается.</dd>
+        <dt>Отвал</dt><dd>Отказ клиента, Отказ преп центра, Клиент перестал отвечать, Сделка провалена, Анализ причины провала.</dd>
+        <dt>Мусор</dt><dd>Нецелевой лид, СПАМ, Прочее.</dd>
+        <dt>Действующие</dt><dd>Обращение действующего — не продажи, ни в одну метрику ОП не входит.</dd>
+      </dl>
+
+      <h3>Базовые понятия</h3>
+      <dl>
+        <dt>Дней на стадии</dt><dd>Целых дней с последней смены стадии до момента среза.</dd>
+        <dt>Зависшая</dt><dd>Сделка живой воронки, которая больше 7 дней на одной стадии (8+ целых дней).</dd>
+        <dt>Горячая висит</dt><dd>Сделка на горячей стадии, зависшая больше 7 дней.</dd>
+        <dt>Новый без движения</dt><dd>На «Новые» или «Квалификация» 2 дня и больше.</dd>
+        <dt>Менеджер</dt><dd>Ответственный в Битриксе на момент среза. Для восстановленных дней 01.09–14.10 — текущий ответственный (история переназначений не выгружалась).</dd>
+      </dl>
+
+      <h3>Блок «На дату»</h3>
+      <p>Считается по листу выбранной даты, блок «Все сделки в работе», для выбранного менеджера или всей команды: живая воронка, зависшие и их доля от живой воронки, сколько сделок на стадии YSELL (накоплено, не за период), сколько лежит в отвале, сколько на квалификации дольше суток.</p>
+
+      <h3>Блок «За период»</h3>
+      <ul>
+        <li>Сравниваются два среза — начальной и конечной датой периода — по ID каждой сделки. Видно только, где сделка была в начале и где оказалась в конце; промежуточные переходы (ушла в отказ и вернулась) не видны.</li>
+        <li>Итог по сделке: <b>новая</b> (нет в первом срезе), <b>подключена к YSELL</b>, <b>отказ / перестал отвечать</b>, <b>мусор</b>, <b>в горячие</b> (перешла на горячую стадию), <b>реанимирована</b> (из отвала или мусора вернулась в живую воронку), <b>без движения</b> (та же живая стадия весь период), <b>закрыта / выбыла</b> (была в первом срезе, нет во втором).</li>
+        <li><b>База менеджера</b> = его живая воронка на начало периода + новые лиды за период.</li>
+        <li><b>Конверсия в YSELL</b> = подключено к YSELL за период / база. Так же считаются % в горячие, % в отказ, % в мусор и % без движения.</li>
+        <li>Сделка засчитывается менеджеру, на котором она стоит в конце периода.</li>
+      </ul>
+
+      <h3>Пороги и подсветка</h3>
+      <dl>
+        <dt>Оценка рабочего дня</dt><dd>Считается только по действиям в Битриксе (вся работа должна быть в CRM). 5 баллов, минус 1 за: начал позже 10:30; закончил раньше 17:00; пауза между касаниями больше 90 мин; касаний меньше половины медианы команды за этот день (ещё минус 1, если меньше четверти). Минимум 1. У квалификатора объём не оценивается. Зелёным — 5, жёлтым — 3, красным — 1–2.</dd>
+        <dt>Завал менеджера</dt><dd>Красным, если зависших больше 70% живой воронки (при 5+ сделках).</dd>
+        <dt>Низкая конверсия</dt><dd>Красным, если конверсия менеджера ниже средней по команде (при базе 5+).</dd>
+        <dt>Доля зависших</dt><dd>Жёлтым от 40%, красным от 60%.</dd>
+        <dt>«Перестал отвечать»</dt><dd>Доля от сделок в работе без YSELL, по всей команде из «Свода»: жёлтым от 35%, красным от 50%.</dd>
+        <dt>% отказа и без движения</dt><dd>Красным от 30% базы.</dd>
+      </dl>
+
+      <h3>Активность и дисциплина</h3>
+      <ul>
+        <li>Источник — листы «Активности» и «Сделки — детали», их каждое утро между 8 и 9 обновляет скрипт <code>syncActivityAndQualification</code> (запуск по расписанию создан функцией <code>setupActivitySync</code>). Дела выгружаются с 01.09.2026.</li>
+        <li><b>Касание</b> — исходящий звонок, исходящее письмо, исходящее сообщение в чате или встреча, созданные в Битриксе. Входящие и плановые дела/задачи касанием не считаются. Всё, что менеджер делает вне Битрикса, не видно.</li>
+        <li><b>Касаний за период</b> — с датой создания между срезами начальной и конечной датой периода; «в день» — делённое на число дней; «на живую сделку» — делённое на живую воронку менеджера на конец периода.</li>
+        <li><b>Первая реакция</b> — минуты от поступления сделки в воронку до первого касания; медиана по новым лидам периода. Подсветка: до 30 мин зелёным, больше 60 — красным.</li>
+        <li><b>Без следующего шага</b> — живая сделка без единого открытого дела. <b>Просрочено дел</b> — открытые дела со сроком в прошлом. <b>Лиды без касания</b> — живые сделки с 01.09, по которым не было ни одного касания. Всё это — на момент утренней выгрузки.</li>
+        <li><b>Касаний до «перестал отвечать»</b> — у сделок с 01.09, лежащих сейчас в этой стадии: медиана касаний и доля с 0–1 касанием. Красным — если у половины и больше было 0–1 касание (при 5+ сделках).</li>
+      </ul>
+
+      <h3>Юлия Мартынова — квалификатор</h3>
+      <ul>
+        <li>Не входит в «Вся команда», в среднюю конверсию и в таблицы эффективности продаж.</li>
+        <li>Её показатели: <b>время квалификации в минутах</b> — от поступления лида в воронку до ухода со стадий «Новые»/«Квалификация», медиана по лидам периода, и доля квалифицированных за 60 минут и быстрее (зелёным от 80%, красным ниже 50%); очередь — лиды, которые сейчас на этих стадиях, и сколько минут ждут (красным — больше 60); переданы в продажи и отсеяно в мусор; дубли.</li>
+        <li>Битрикс не хранит, кто перевёл сделку на другую стадию, поэтому время квалификации — это скорость процесса, а не лично Юлии.</li>
+        <li><b>Дубли</b> — открытые сделки (кроме «Обращение действующего») с одинаковым email в названии. Сравнивается число групп дублей на начало и конец периода. Само объединение в данных не видно — только то, что дублей стало меньше.</li>
+      </ul>
+
+      <h3>Кого не считаем</h3>
+      <p>Юлия Перелет и Assistant Assistant исключены из всех расчётов, кроме двух командных показателей из «Свода» (график динамики и доля «перестал отвечать») — там нет разбивки по менеджерам.</p>
+
+      <h3>Что учитывать</h3>
+      <ul>
+        <li>Суммы сделок в Битриксе не заполнены — денег и прогноза на дашборде нет.</li>
+        <li>Одна сделка, переведённая в другую воронку, в восстановленных днях не учтена.</li>
+        <li>Колонка «Создана» на листах по дням показывается неверно (таблица прочитала дату как время) — дашборд её не использует.</li>
+        <li>Вебхук Битрикса, через который всё выгружается, лучше перевыпустить: он пересылался в чате.</li>
+      </ul>
+    </details>
+  </section>
+</div>
+
+<script>
+window.RP = {
+  HOT: ['Готов стать клиентом', 'Подписание договора', 'Оплата депозита'],
+  WIN: 'Подключение к YSELL',
+  parseD: (s) => { const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(s || '').trim()); return m ? new Date(Date.UTC(+m[3], +m[2] - 1, +m[1])) : null; },
+  fmt: d3.format(','),
+  pct: d3.format('.0%'),
+  dateOf: (rs) => { const m = /^'([^']+)'/.exec((Array.isArray(rs) ? rs[0] : rs) || ''); return m ? m[1] : null; },
+  rangeOf: (d) => ["'" + d + "'!A1:G2500"],
+  mgr: () => dash.params().mgr || 'Все',
+  moveFilter: 'Важное',
+};
+
+dash.loader('svod', {
+  description: 'Строки листа «Свод» как таблица: первая строка — названия колонок, цифры как числа.',
+  fn: ({ answer }) => {
+    const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+    if (a && a.error) throw new Error(a.error.message || String(a.error));
+    const v = (a && a.values) || [];
+    if (!v.length) throw new Error('Лист «Свод» пустой');
+    const head = v[0];
+    const rows = v.slice(1).filter((r) => r && r[0]).map((r) => {
+      const o = {};
+      head.forEach((c, j) => {
+        const x = r[j] ?? '';
+        o[c] = (c === 'Дата' || c === 'Валюты') ? String(x).trim() : (x === '' ? null : Number(String(x).replace(/\s/g, '').replace(',', '.')));
+      });
+      return o;
+    });
+    return { data: rows, columns: head };
+  },
+});
+
+window.RP_dayLoader = {
+  description: 'Лист даты разобран на блоки отчёта (Сводка, По стадиям, По менеджерам, Зависшие, Новые, Закрытые, Все сделки в работе): строка блока — строка таблицы с колонкой section; ссылка на сделку и её ID — из ячейки с названием.',
+  fn: ({ answer }) => {
+    const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+    if (a && a.error) throw new Error(a.error.message || String(a.error));
+    const grid = (((a && a.sheets) || [])[0] || {}).data || [];
+    const rowData = (grid[0] && grid[0].rowData) || [];
+    const v = rowData.map((r) => (r.values || []).map((c) => (c && c.formattedValue != null ? String(c.formattedValue) : '')));
+    const links = rowData.map((r) => ((r.values || [])[0] || {}).hyperlink || '');
+    const NUM = new Set(['Сделок', 'Сумма', 'Зависших', 'Новых за период', 'Дней на стадии']);
+    const rows = [];
+    let section = null, cols = null, expectHeader = false;
+    v.forEach((r, idx) => {
+      if (idx < 2) return;
+      if (!r || !r.length || r.every((c) => c === '')) { cols = null; return; }
+      if (r.length === 1 && !cols && !expectHeader) { section = r[0]; expectHeader = true; return; }
+      if (expectHeader) { cols = r; expectHeader = false; return; }
+      if (!cols || r[0] === '—') return;
+      const id = (/\/details\/(\d+)/.exec(links[idx] || '') || [])[1] || '';
+      const o = { key: String(idx + 1), section, 'ID': id, 'Ссылка': links[idx] || '' };
+      cols.forEach((c, j) => {
+        if (c === 'Создана') return;
+        const x = r[j] ?? '';
+        o[c] = NUM.has(c) ? (x === '' ? null : Number(String(x).replace(/\s/g, '').replace(',', '.'))) : String(x);
+      });
+      rows.push(o);
+    });
+    const title = (v[0] || [])[0] || '';
+    const sm = /(\d{2})\.(\d{2})\.(\d{4}) (\d{2}):(\d{2})/.exec(title);
+    const srez = sm ? sm[3] + '-' + sm[2] + '-' + sm[1] + ' ' + sm[4] + ':' + sm[5] : '';
+    rows.forEach((o) => { o['Срез'] = srez; });
+    return {
+      data: rows,
+      columns: ['Срез', 'key', 'section', 'ID', 'Ссылка', 'Показатель', 'Значение', 'Стадия', 'Сделок', 'Сумма', 'Менеджер', 'Зависших', 'Новых за период', 'Сделка', 'Итог', 'Дней на стадии', 'Валюта'],
+      meta: title ? [{ label: 'Срез', value: title }] : [],
+    };
+  },
+};
+dash.loader('day', window.RP_dayLoader);
+dash.loader('dayA', window.RP_dayLoader);
+
+dash.calc('kpi', {
+  inputs: ['svod'],
+  title: 'Показатели по дням (команда)',
+  description: 'Из «Свода». «В работе» = все сделки в работе минус «Подключение к YSELL». Доля «Клиент перестал отвечать» от сделок в работе.',
+  fn: (svod) => {
+    const pd = (s) => { const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(s)); return m ? Date.UTC(+m[3], +m[2] - 1, +m[1]) : NaN; };
+    const rows = svod.filter((r) => !isNaN(pd(r['Дата']))).sort((a, b) => pd(a['Дата']) - pd(b['Дата']));
+    return rows.map((r) => {
+      const ys = r['Стадия: Подключение к YSELL'] || 0;
+      const work = (r['В работе, шт'] || 0) - ys, ghost = r['Стадия: Клиент перестал отвечать'] || 0;
+      return {
+        'Дата': r['Дата'], 'В работе': work, 'Подключено к YSELL': ys,
+        'Перестал отвечать': ghost, 'Доля перестал отвечать': work ? ghost / work : null,
+        'Ожидаем ответа': r['Стадия: Ожидаем ответа'],
+      };
+    });
+  },
+});
+
+window.RP_mgrDayFn = (day) => {
+    const G = (s) => ['Подключение к YSELL', 'Сделка успешна'].includes(s) ? 'success' : ['Отказ клиента', 'Отказ перп центра', 'Клиент перестал отвечать', 'Сделка провалена', 'Анализ причины провала'].includes(s) ? 'lost' : ['Нецелевой лид', 'СПАМ', 'Прочее'].includes(s) ? 'junk' : s === 'Обращение действующего' ? 'client' : 'live';
+    const by = {};
+    const add = (name, r) => {
+      const m = by[name] = by[name] || { 'Менеджер': name, 'Живая воронка': 0, 'Зависшие': 0, 'Подключены к YSELL': 0, 'Отказ и перестал отвечать': 0, 'Мусор': 0, 'На квалификации больше дня': 0 };
+      const g = G(r['Стадия']);
+      if (g === 'live') { m['Живая воронка']++; if (r['Дней на стадии'] > 7) m['Зависшие']++; if (['Новые', 'Квалификация'].includes(r['Стадия']) && r['Дней на стадии'] >= 1) m['На квалификации больше дня']++; }
+      if (g === 'success') m['Подключены к YSELL']++;
+      if (g === 'lost') m['Отказ и перестал отвечать']++;
+      if (g === 'junk') m['Мусор']++;
+    };
+    day.filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер'])).forEach((r) => { add(r['Менеджер'], r); if (r['Менеджер'] !== 'Юлия Мартынова') add('Все', r); });
+    return Object.values(by).map((m) => ({ ...m, 'Доля зависших': m['Живая воронка'] ? m['Зависшие'] / m['Живая воронка'] : 0 }))
+      .sort((a, b) => (a['Менеджер'] === 'Все' ? -1 : b['Менеджер'] === 'Все' ? 1 : b['Живая воронка'] - a['Живая воронка']));
+  };
+dash.calc('mgr_day', {
+  inputs: ['day'],
+  title: 'Менеджеры на дату',
+  description: 'Без сделок Юлии Перелет и Assistant Assistant; Юлия Мартынова (квалификатор) не входит в «Все». Из «Все сделки в работе» на дату, по менеджеру и всего («Все»): живая воронка (без отказов, «перестал отвечать», мусора, действующих и YSELL), зависшие в ней (> 7 дней на стадии), YSELL, отказ и «перестал отвечать», мусор (нецелевой, спам, прочее), на «Новые»/«Квалификация» дольше суток.',
+  fn: window.RP_mgrDayFn,
+});
+
+dash.calc('mgr_dayA', {
+  inputs: ['dayA'],
+  title: 'Менеджеры на начало периода',
+  description: 'Без сделок Юлии Перелет и Assistant Assistant; Юлия Мартынова (квалификатор) не входит в «Все». Из «Все сделки в работе» на дату, по менеджеру и всего («Все»): живая воронка (без отказов, «перестал отвечать», мусора, действующих и YSELL), зависшие в ней (> 7 дней на стадии), YSELL, отказ и «перестал отвечать», мусор (нецелевой, спам, прочее), на «Новые»/«Квалификация» дольше суток.',
+  fn: window.RP_mgrDayFn,
+});
+
+dash.calc('hot_stuck', {
+  inputs: ['day'],
+  title: 'Горячие сделки висят',
+  description: 'Сделки на стадиях «Готов стать клиентом», «Подписание договора», «Оплата депозита», которые больше 7 дней не двигались.',
+  fn: (day) => day
+    .filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']) && ['Готов стать клиентом', 'Подписание договора', 'Оплата депозита'].includes(r['Стадия']) && r['Дней на стадии'] > 7)
+    .sort((a, b) => b['Дней на стадии'] - a['Дней на стадии'])
+    .map((r) => ({ key: r.key, 'Сделка': r['Сделка'], 'Ссылка': r['Ссылка'], 'Стадия': r['Стадия'], 'Дней на стадии': r['Дней на стадии'], 'Менеджер': r['Менеджер'] })),
+});
+
+dash.calc('new_idle', {
+  inputs: ['day'],
+  title: 'Новые без движения',
+  description: 'Сделки на «Новые» или «Квалификация» 2 дня и больше.',
+  fn: (day) => day
+    .filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']) && ['Новые', 'Квалификация'].includes(r['Стадия']) && r['Дней на стадии'] >= 2)
+    .sort((a, b) => b['Дней на стадии'] - a['Дней на стадии'])
+    .map((r) => ({ key: r.key, 'Сделка': r['Сделка'], 'Ссылка': r['Ссылка'], 'Стадия': r['Стадия'], 'Дней на стадии': r['Дней на стадии'], 'Менеджер': r['Менеджер'] })),
+});
+
+dash.calc('qual_queue', {
+  inputs: ['day'],
+  title: 'Очередь на квалификацию',
+  description: 'Все сделки, которые сейчас на «Новые» или «Квалификация», у всей команды; дольше суток — 1 день и больше.',
+  fn: (day) => day
+    .filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']) && ['Новые', 'Квалификация'].includes(r['Стадия']))
+    .sort((a, b) => b['Дней на стадии'] - a['Дней на стадии'])
+    .map((r) => ({ key: r.key, 'Сделка': r['Сделка'], 'Ссылка': r['Ссылка'], 'Стадия': r['Стадия'], 'Дней на стадии': r['Дней на стадии'], 'Менеджер': r['Менеджер'] })),
+});
+
+dash.calc('dups', {
+  inputs: ['day'],
+  title: 'Возможные дубли',
+  description: 'Открытые сделки (кроме «Обращение действующего»), у которых в названии один и тот же email; группа = email, встречающийся в 2+ сделках.',
+  fn: (day) => {
+    const by = {};
+    day.filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']) && r['Стадия'] !== 'Обращение действующего').forEach((r) => {
+      const m = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.exec(r['Сделка'] || '');
+      if (!m) return;
+      const e = m[0].toLowerCase();
+      (by[e] = by[e] || []).push(r);
+    });
+    return Object.entries(by).filter(([, rs]) => rs.length > 1).map(([e, rs]) => ({
+      email: e, 'Сделок': rs.length,
+      'Сделки': rs.map((r) => ({ name: r['Сделка'], link: r['Ссылка'], stage: r['Стадия'] })),
+      'Менеджеры': [...new Set(rs.map((r) => r['Менеджер']))].join(', '),
+    })).sort((a, b) => b['Сделок'] - a['Сделок']);
+  },
+});
+
+dash.calc('moves', {
+  inputs: ['dayA', 'day'],
+  title: 'Движение сделок за период',
+  description: 'Без сделок Юлии Перелет и Assistant Assistant. Сравнение «Все сделки в работе» двух срезов по ID сделки: новая (нет в первом срезе), подключена к YSELL, ушла в отказ/«перестал отвечать», в мусор, дошла до горячих стадий, реанимирована, без движения (та же живая стадия), закрыта/выбыла (нет во втором срезе).',
+  fn: (dayA, day) => {
+    const G = (s) => ['Подключение к YSELL', 'Сделка успешна'].includes(s) ? 'success' : ['Отказ клиента', 'Отказ перп центра', 'Клиент перестал отвечать', 'Сделка провалена', 'Анализ причины провала'].includes(s) ? 'lost' : ['Нецелевой лид', 'СПАМ', 'Прочее'].includes(s) ? 'junk' : s === 'Обращение действующего' ? 'client' : 'live';
+    const HOT = ['Готов стать клиентом', 'Подписание договора', 'Оплата депозита'];
+    const pick = (rows) => new Map(rows.filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']) && r['ID']).map((r) => [r['ID'], r]));
+    const A = pick(dayA), B = pick(day);
+    const ids = new Set([...A.keys(), ...B.keys()]);
+    const out = [];
+    ids.forEach((id) => {
+      const a = A.get(id), b = B.get(id);
+      const sa = a ? a['Стадия'] : '', sb = b ? b['Стадия'] : '';
+      const ga = a ? G(sa) : null, gb = b ? G(sb) : null;
+      let res;
+      if (!a) res = gb === 'success' ? 'Подключён к YSELL' : gb === 'lost' ? 'Отказ / перестал отвечать' : gb === 'junk' ? 'Мусор' : gb === 'client' ? 'Действующий клиент' : HOT.includes(sb) ? 'В горячие' : 'Новый в работе';
+      else if (!b) res = 'Закрыта / выбыла';
+      else if (sa === sb) res = ga === 'live' ? 'Без движения' : 'Без изменений';
+      else if (gb === 'success' && ga !== 'success') res = 'Подключён к YSELL';
+      else if (gb === 'lost' && ga !== 'lost') res = 'Отказ / перестал отвечать';
+      else if (gb === 'junk' && ga !== 'junk') res = 'Мусор';
+      else if (HOT.includes(sb) && !HOT.includes(sa)) res = 'В горячие';
+      else if (gb === 'live' && ga !== 'live') res = 'Реанимирована';
+      else res = 'Движение по стадиям';
+      const r = b || a;
+      out.push({ key: id, 'Сделка': r['Сделка'], 'Ссылка': r['Ссылка'], 'Менеджер': r['Менеджер'], 'Было': sa || '—', 'Стало': sb || '—', 'Итог': res, 'Новая': !a, 'Живая на начало': ga === 'live' });
+    });
+    return out;
+  },
+});
+
+dash.calc('period', {
+  inputs: ['moves'],
+  title: 'Эффективность за период',
+  description: 'Юлия Мартынова (квалификатор) не входит в «Все». Из движения сделок, по менеджеру (во втором срезе) и всего («Все»). База = живая воронка на начало + новые лиды. Конверсия в YSELL, доля дошедших до горячих стадий, ушедших в отказ/«перестал отвечать», в мусор и без движения весь период — всё в % от базы.',
+  fn: (moves) => {
+    const by = {};
+    const add = (name, m) => {
+      const o = by[name] = by[name] || { 'Менеджер': name, 'Живая на начало': 0, 'Новых лидов': 0, 'Подключено к YSELL': 0, 'В горячие': 0, 'Отказ / перестал отвечать': 0, 'Мусор': 0, 'Без движения': 0 };
+      if (m['Живая на начало']) o['Живая на начало']++;
+      if (m['Новая']) o['Новых лидов']++;
+      if (m['Итог'] === 'Подключён к YSELL') o['Подключено к YSELL']++;
+      if (m['Итог'] === 'В горячие') o['В горячие']++;
+      if (m['Итог'] === 'Отказ / перестал отвечать') o['Отказ / перестал отвечать']++;
+      if (m['Итог'] === 'Мусор') o['Мусор']++;
+      if (m['Итог'] === 'Без движения') o['Без движения']++;
+    };
+    moves.forEach((m) => { add(m['Менеджер'], m); if (m['Менеджер'] !== 'Юлия Мартынова') add('Все', m); });
+    return Object.values(by).map((o) => {
+      const base = o['Живая на начало'] + o['Новых лидов'];
+      const p = (n) => (base ? n / base : 0);
+      return { ...o, 'База': base, 'Конверсия': p(o['Подключено к YSELL']), 'Доля в горячие': p(o['В горячие']), 'Доля отказ': p(o['Отказ / перестал отвечать']), 'Доля мусор': p(o['Мусор']), 'Доля без движения': p(o['Без движения']) };
+    }).sort((a, b) => (a['Менеджер'] === 'Все' ? -1 : b['Менеджер'] === 'Все' ? 1 : b['Конверсия'] - a['Конверсия']));
+  },
+});
+
+dash.calc('qual', {
+  inputs: ['qual_queue', 'dups', 'moves', 'dayA'],
+  title: 'Квалификация и дубли',
+  description: 'Правила квалификатора. Очередь на квалификацию (дольше суток) и самый старый лид в ней; новые за период: сколько квалифицировано (ушли с «Новые»/«Квалификация»), доля, сколько отсеяно в мусор и передано менеджерам продаж, сколько ещё ждут; группы дублей по email сейчас и на начало периода.',
+  fn: (qual_queue, dups, moves, dayA) => {
+    const byA = {};
+    dayA.filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']) && r['Стадия'] !== 'Обращение действующего').forEach((r) => {
+      const m = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.exec(r['Сделка'] || '');
+      if (m) byA[m[0].toLowerCase()] = (byA[m[0].toLowerCase()] || 0) + 1;
+    });
+    return [{
+      'Очередь всего': qual_queue.length,
+      'Очередь больше дня': qual_queue.filter((r) => r['Дней на стадии'] >= 1).length,
+      'Самый старый, дней': qual_queue.length ? Math.max(...qual_queue.map((r) => r['Дней на стадии'])) : 0,
+      'Новых за период': moves.filter((m) => m['Новая']).length,
+      'Новые не квалифицированы': moves.filter((m) => m['Новая'] && ['Новые', 'Квалификация'].includes(m['Стало'])).length,
+      'Квалифицировано': moves.filter((m) => m['Новая'] && !['Новые', 'Квалификация'].includes(m['Стало'])).length,
+      'Доля квалифицированных': moves.filter((m) => m['Новая']).length ? moves.filter((m) => m['Новая'] && !['Новые', 'Квалификация'].includes(m['Стало'])).length / moves.filter((m) => m['Новая']).length : null,
+      'Отсеяно в мусор': moves.filter((m) => m['Новая'] && m['Итог'] === 'Мусор').length,
+      'Передано в продажи': moves.filter((m) => m['Новая'] && m['Менеджер'] !== 'Юлия Мартынова' && ['Новый в работе', 'В горячие', 'Подключён к YSELL'].includes(m['Итог'])).length,
+      'Групп дублей': dups.length,
+      'Групп дублей на начало': Object.values(byA).filter((n) => n > 1).length,
+    }];
+  },
+});
+</script>
+
+<script>
+(() => {
+  const selB = document.getElementById('rp-date');
+  const selA = document.getElementById('rp-from');
+  const mgrs = document.getElementById('rp-mgrs');
+  let initialized = false;
+  const weekBefore = (dates, b) => { const t = RP.parseD(b) - 7 * 864e5; const older = dates.filter((d) => RP.parseD(d) < RP.parseD(b)); return older.find((d) => RP.parseD(d) <= t) || older[older.length - 1] || null; };
+  selB.addEventListener('change', () => {
+    if (!selB.value) return;
+    const p = { ranges: RP.rangeOf(selB.value) };
+    const a = RP.parseD(RP.dateOf(dash.params().rangesA));
+    if (!a || a >= RP.parseD(selB.value)) { const w = weekBefore([...selB.options].map((o) => o.value), selB.value); if (w) p.rangesA = RP.rangeOf(w); }
+    dash.setParams(p);
+  });
+  selA.addEventListener('change', () => { if (selA.value) dash.setParams({ rangesA: RP.rangeOf(selA.value) }); });
+  mgrs.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-mgr]');
+    if (!b) return;
+    const m = b.dataset.mgr;
+    dash.setParams({ mgr: m === 'Все' ? null : m });
+    dash.setLink(m === 'Все' ? 'top' : 'm-' + m.replace(/\s+/g, '_'));
+  });
+
+  dash.onData(() => {
+    const s = dash.data('svod');
+    if (s.status === 'ok') {
+      const dates = s.data.map((r) => r['Дата']).filter((d) => RP.parseD(d)).sort((a, b) => RP.parseD(b) - RP.parseD(a));
+      if (!initialized && dates.length) {
+        initialized = true;
+        const b = dates[0], a = weekBefore(dates, b);
+        const p = {};
+        if (RP.dateOf(dash.params().ranges) !== b) p.ranges = RP.rangeOf(b);
+        if (a && RP.dateOf(dash.params().rangesA) !== a) p.rangesA = RP.rangeOf(a);
+        const h = decodeURIComponent(location.hash.slice(1));
+        if (h.startsWith('m-')) p.mgr = h.slice(2).replace(/_/g, ' ');
+        if (Object.keys(p).length) dash.setParams(p);
+      }
+      const curB = RP.dateOf(dash.params().ranges), curA = RP.dateOf(dash.params().rangesA);
+      if (selB.options.length !== dates.length || selB.options[0]?.value !== dates[0]) selB.replaceChildren(...dates.map((d) => new Option(d, d)));
+      const aOpts = dates.filter((d) => RP.parseD(d) < RP.parseD(curB));
+      if (selA.options.length !== aOpts.length || selA.options[0]?.value !== aOpts[0]) selA.replaceChildren(...aOpts.map((d) => new Option(d, d)));
+      if (document.activeElement !== selB) selB.value = curB;
+      if (document.activeElement !== selA) selA.value = curA;
+    }
+    const md = dash.data('mgr_day');
+    if (md.status === 'ok') {
+      const cur = RP.mgr();
+      mgrs.replaceChildren(...md.data.map((r) => r['Менеджер']).map((n) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.mgr = n; b.textContent = n === 'Все' ? 'Вся команда' : n === 'Юлия Мартынова' ? n + ' · квалификатор' : n; b.setAttribute('aria-pressed', String(n === cur)); return b; }));
+    }
+  });
+})();
+</script>
+
+<script>
+(() => {
+  const setTxt = (el, t) => { el.textContent = t; el.classList.remove('dash-skeleton'); };
+  const tone = (el, cls) => { el.classList.remove('rp-good', 'rp-bad', 'rp-warn'); if (cls) el.classList.add(cls); };
+  const td = (text, cls) => { const e = document.createElement('td'); e.textContent = text; if (cls) e.className = cls; return e; };
+  const tdNP = (n, p, cls) => { const e = td(RP.pct(p), 'rp-n' + (cls ? ' ' + cls : '')); e.title = RP.fmt(n) + ' сделок'; return e; };
+  const clean = (s) => String(s || '').replace(/^\s*\/\s*/, '').replace(/\s*\/\s*$/, '') || 'Сделка';
+  const linkTo = (name, href) => { if (/^https:\/\//.test(href || '')) { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.textContent = name; return a; } return document.createTextNode(name); };
+  const dealCell = (r) => { const e = td('', 'rp-deal'); e.append(linkTo(clean(r['Сделка']), r['Ссылка'])); return e; };
+  const IMPORTANT = ['Подключён к YSELL', 'Отказ / перестал отвечать', 'Мусор', 'В горячие', 'Реанимирована', 'Закрыта / выбыла'];
+  const PCT = new Set(['Конверсия', 'Доля в горячие', 'Доля отказ', 'Доля мусор', 'Доля без движения', 'Доля зависших']);
+
+  function fillTable(id, cols, opts = {}) {
+    const t = document.querySelector('table[data-source="' + id + '"]');
+    const tb = t.querySelector('tbody');
+    const d = dash.data(id);
+    tb.replaceChildren();
+    const box = t.parentElement;
+    box.querySelector('.rp-fail')?.remove();
+    if (d.status === 'error') { const f = document.createElement('div'); f.className = 'rp-fail'; f.textContent = 'Failed to load'; box.append(f); return []; }
+    if (d.status !== 'ok') return [];
+    let rows = d.data || [];
+    if (opts.filter) rows = rows.filter(opts.filter);
+    if (opts.sort) rows = [...rows].sort(opts.sort);
+    if (!rows.length) { const tr = document.createElement('tr'); const c = td(opts.empty || 'Нет — хорошо.', 'rp-good'); c.colSpan = cols.length; tr.append(c); tb.append(tr); return rows; }
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      cols.forEach((c) => tr.append(c(r)));
+      tr.dataset.key = opts.key ? r[opts.key] : r.key;
+      if (opts.rowClass) { const c = opts.rowClass(r); if (c) tr.classList.add(c); }
+      tb.append(tr);
+    });
+    return rows;
+  }
+
+  dash.onData(() => {
+    const mgr = RP.mgr();
+    const dB = RP.dateOf(dash.params().ranges), dA = RP.dateOf(dash.params().rangesA);
+    const who = mgr === 'Все' ? 'вся команда' : mgr;
+    const latest = (() => { const s = dash.data('svod'); return s.status === 'ok' ? s.data.map((r) => r['Дата']).filter((d) => RP.parseD(d)).sort((a, b) => RP.parseD(b) - RP.parseD(a))[0] : null; })();
+    document.getElementById('now-title').textContent = (dB && dB === latest ? 'Сейчас в воронке' : 'В воронке на ' + (dB || '…')) + ' — ' + who;
+    document.getElementById('period-title').textContent = 'С ' + (dA || '…') + ' по ' + (dB || '…') + ' — ' + who;
+    const onlyMgr = (r) => mgr === 'Все' || r['Менеджер'] === mgr;
+    const isQ = mgr === 'Юлия Мартынова';
+    ['now', 'period', 'flags'].forEach((id) => { document.getElementById(id).hidden = isQ; });
+    document.getElementById('qual').style.order = isQ ? '-1' : '';
+    document.getElementById('top').style.order = isQ ? '-2' : '';
+
+    ['mgr_day', 'period'].forEach((src) => {
+      const d = dash.data(src);
+      const row = d.status === 'ok' ? d.data.find((r) => r['Менеджер'] === mgr) : null;
+      document.querySelectorAll('#now [data-source="' + src + '"][data-field], #period .rp-tiles [data-source="' + src + '"][data-field]').forEach((el) => {
+        el.setAttribute('data-where', 'Менеджер=' + encodeURIComponent(mgr));
+        const f = el.getAttribute('data-field');
+        if (!row || row[f] == null) { el.textContent = '—'; return; }
+        const v = row[f];
+        if (PCT.has(f)) {
+          setTxt(el, RP.pct(v));
+          tone(el, f === 'Доля зависших' ? (v > 0.6 ? 'rp-bad' : v > 0.4 ? 'rp-warn' : null) : (f === 'Конверсия' || f === 'Доля в горячие') ? (v > 0 ? 'rp-good' : null) : (f === 'Доля отказ' || f === 'Доля без движения') ? (v > 0.3 ? 'rp-bad' : null) : null);
+        } else {
+          setTxt(el, RP.fmt(v));
+          tone(el, (f === 'Подключены к YSELL' || f === 'Подключено к YSELL' || f === 'В горячие') && v > 0 ? 'rp-good' : (f === 'На квалификации больше дня' && v > 0) ? 'rp-bad' : (row && f === 'Отказ / перестал отвечать' && row['Доля отказ'] > 0.3) || (row && f === 'Без движения' && row['Доля без движения'] > 0.3) ? 'rp-bad' : null);
+        }
+      });
+    });
+
+    const mA = dash.data('mgr_dayA');
+    const rowA = mA.status === 'ok' ? mA.data.find((r) => r['Менеджер'] === mgr) : null;
+    document.querySelectorAll('.rp-adate').forEach((el) => { el.textContent = dA || '—'; });
+    document.querySelectorAll('[data-source="mgr_dayA"][data-field]').forEach((el) => {
+      el.setAttribute('data-where', 'Менеджер=' + encodeURIComponent(mgr));
+      const v = rowA ? rowA[el.getAttribute('data-field')] : null;
+      el.textContent = v == null ? '—' : RP.fmt(v);
+    });
+
+    const q0 = dash.data('qual');
+    const q = { status: q0.status, data: q0.status === 'ok' && q0.data ? q0.data[0] : null };
+    document.querySelectorAll('[data-source="qual"]').forEach((el) => {
+      const f = el.getAttribute('data-field');
+      if (q.status !== 'ok' || !q.data || q.data[f] == null) { el.textContent = '—'; return; }
+      setTxt(el, f.startsWith('Доля') ? RP.pct(q.data[f]) : RP.fmt(q.data[f]));
+      if (f === 'Доля квалифицированных') tone(el, q.data[f] >= 0.8 ? 'rp-good' : q.data[f] < 0.5 ? 'rp-bad' : 'rp-warn');
+      if (f === 'Групп дублей') tone(el, q.data[f] > q.data['Групп дублей на начало'] ? 'rp-bad' : q.data[f] < q.data['Групп дублей на начало'] ? 'rp-good' : null);
+      if (f === 'Очередь больше дня' || f === 'Новые не квалифицированы') tone(el, q.data[f] > 0 ? 'rp-bad' : 'rp-good');
+    });
+
+    const k = dash.data('kpi');
+    const krow = k.status === 'ok' ? k.data.find((r) => r['Дата'] === dB) : null;
+    document.querySelectorAll('[data-source="kpi"][data-field]').forEach((el) => {
+      el.setAttribute('data-where', 'Дата=' + encodeURIComponent(dB || ''));
+      const v = krow ? krow[el.getAttribute('data-field')] : null;
+      if (v == null) { el.textContent = '—'; return; }
+      setTxt(el, RP.pct(v)); tone(el, v > 0.5 ? 'rp-bad' : v > 0.35 ? 'rp-warn' : null);
+    });
+    document.getElementById('flag-ghost').classList.toggle('rp-alert', !!(krow && krow['Доля перестал отвечать'] > 0.5));
+
+    const dealCols = [dealCell, (r) => td(r['Стадия']), (r) => td(RP.fmt(r['Дней на стадии']), 'rp-n'), (r) => td(r['Менеджер'])];
+    [['hot_stuck', 'flag-hot']].forEach(([id, card]) => {
+      const rows = fillTable(id, dealCols, { filter: onlyMgr });
+      const cnt = document.querySelector('#' + card + ' .rp-count');
+      if (dash.data(id).status === 'ok') { setTxt(cnt, RP.fmt(rows.length)); tone(cnt, rows.length ? 'rp-bad' : 'rp-good'); document.getElementById(card).classList.toggle('rp-alert', rows.length > 0); }
+      else cnt.textContent = '—';
+    });
+    const bar = (p, cls) => { const e = document.createElement('td'); const w = document.createElement('div'); w.style.cssText = 'display:flex;align-items:center;gap:.5rem'; const b = document.createElement('div'); b.className = 'rp-bar'; b.style.flex = '1'; const s = document.createElement('span'); s.style.width = (Math.min(1, p) * 100).toFixed(1) + '%'; if (cls) s.className = cls; b.append(s); const l = document.createElement('span'); l.textContent = RP.pct(p); w.append(b, l); e.append(w); return e; };
+    fillTable('mgr_day', [
+      (r) => td(r['Менеджер'] === 'Все' ? 'Вся команда' : r['Менеджер']), (r) => td(RP.fmt(r['Живая воронка']), 'rp-n'), (r) => td(RP.fmt(r['Зависшие']), 'rp-n'),
+      (r) => bar(r['Доля зависших'], r['Доля зависших'] > 0.7 ? 'rp-crit' : ''),
+      (r) => td(RP.fmt(r['Подключены к YSELL']), 'rp-n' + (r['Подключены к YSELL'] ? ' rp-good' : '')), (r) => td(RP.fmt(r['Отказ и перестал отвечать']), 'rp-n'), (r) => td(RP.fmt(r['Мусор']), 'rp-n'),
+    ], { key: 'Менеджер', filter: (r) => r['Менеджер'] !== 'Юлия Мартынова', rowClass: (r) => r['Менеджер'] === mgr && mgr !== 'Все' ? 'rp-sel' : (r['Менеджер'] !== 'Все' && r['Живая воронка'] >= 5 && r['Доля зависших'] > 0.7 ? 'rp-hl' : null) });
+
+    const pAll = dash.data('period');
+    const all = pAll.status === 'ok' ? pAll.data.find((r) => r['Менеджер'] === 'Все') : null;
+    fillTable('period', [
+      (r) => td(r['Менеджер'] === 'Все' ? 'Вся команда' : r['Менеджер']), (r) => td(RP.fmt(r['База']), 'rp-n'),
+      (r) => { const e = bar(r['Конверсия'], 'rp-ok'); e.title = r['Подключено к YSELL'] + ' из ' + r['База']; const n = document.createElement('span'); n.className = 'rp-pc'; n.textContent = '(' + RP.fmt(r['Подключено к YSELL']) + ')'; e.firstChild.append(n); return e; },
+      (r) => tdNP(r['В горячие'], r['Доля в горячие']), (r) => tdNP(r['Отказ / перестал отвечать'], r['Доля отказ']), (r) => tdNP(r['Мусор'], r['Доля мусор']), (r) => tdNP(r['Без движения'], r['Доля без движения']),
+      (r) => td(RP.fmt(r['Новых лидов']), 'rp-n'),
+    ], { key: 'Менеджер', filter: (r) => r['Менеджер'] !== 'Юлия Мартынова', rowClass: (r) => r['Менеджер'] === mgr && mgr !== 'Все' ? 'rp-sel' : (all && r['Менеджер'] !== 'Все' && r['База'] >= 5 && r['Конверсия'] < all['Конверсия'] ? 'rp-hl' : null) });
+
+    const mv = dash.data('moves');
+    const chips = document.getElementById('move-chips');
+    if (mv.status === 'ok') {
+      const mine = mv.data.filter(onlyMgr);
+      const cnt = d3.rollup(mine, (v) => v.length, (r) => r['Итог']);
+      const kinds = ['Важное', ...IMPORTANT.filter((k2) => cnt.get(k2)), ...['Новый в работе', 'Движение по стадиям', 'Без движения'].filter((k2) => cnt.get(k2))];
+      if (!kinds.includes(RP.moveFilter)) RP.moveFilter = 'Важное';
+      chips.replaceChildren(...kinds.map((k2) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.kind = k2; b.setAttribute('aria-pressed', String(k2 === RP.moveFilter)); b.textContent = k2 + ' · ' + RP.fmt(k2 === 'Важное' ? mine.filter((r) => IMPORTANT.includes(r['Итог'])).length : cnt.get(k2)); return b; }));
+    } else chips.replaceChildren();
+    const order = new Map(IMPORTANT.map((k2, i) => [k2, i]));
+    fillTable('moves', [dealCell, (r) => td(r['Итог'], r['Итог'] === 'Подключён к YSELL' || r['Итог'] === 'В горячие' ? 'rp-good' : r['Итог'] === 'Отказ / перестал отвечать' ? 'rp-bad' : ''), (r) => td(r['Было']), (r) => td(r['Стало']), (r) => td(r['Менеджер'])],
+      { filter: (r) => onlyMgr(r) && (RP.moveFilter === 'Важное' ? IMPORTANT.includes(r['Итог']) : r['Итог'] === RP.moveFilter), sort: (x, y) => (order.get(x['Итог']) ?? 99) - (order.get(y['Итог']) ?? 99), empty: 'Ничего не произошло.' });
+
+
+    fillTable('dups', [
+      (r) => td(r.email), (r) => td(RP.fmt(r['Сделок']), 'rp-n'),
+      (r) => { const e = td('', 'rp-deal'); r['Сделки'].forEach((x, i) => { if (i) e.append(document.createElement('br')); e.append(linkTo(clean(x.name) + ' (' + x.stage + ')', x.link)); }); return e; },
+      (r) => td(r['Менеджеры']),
+    ], { key: 'email', empty: 'Дублей не найдено.' });
+
+    const take = document.getElementById('takeaway');
+    const pr = all && pAll.data.find((r) => r['Менеджер'] === mgr);
+    const md = dash.data('mgr_day');
+    const nr = md.status === 'ok' ? md.data.find((r) => r['Менеджер'] === mgr) : null;
+    const hot = dash.data('hot_stuck');
+    if (isQ && q.status === 'ok' && q.data) {
+      take.replaceChildren();
+      const add = (t, b) => { const n = b ? document.createElement('b') : document.createTextNode(t); if (b) n.textContent = t; take.append(n); };
+      const sp = dash.data('speed'); const sa = sp.status === 'ok' ? sp.data.find((r) => r['Менеджер'] === 'Все') : null;
+      add('Юлия Мартынова, квалификатор, с ' + dA + ' по ' + dB + ': медианное время квалификации '); add((sa && sa['Квалификация, мин (медиана)'] != null ? RP.fmt(sa['Квалификация, мин (медиана)']) : '—') + ' мин', true);
+      add(', за 60 минут и быстрее — ' + (sa && sa['Квалифицировано за 60 мин'] != null ? RP.pct(sa['Квалифицировано за 60 мин']) : '—'));
+      add(', возможных дублей ' + RP.fmt(q.data['Групп дублей']) + ' (было ' + RP.fmt(q.data['Групп дублей на начало']) + ').');
+    } else if (pr && nr && hot.status === 'ok') {
+      take.replaceChildren();
+      const add = (t, b) => { const n = b ? document.createElement('b') : document.createTextNode(t); if (b) n.textContent = t; take.append(n); };
+      add((mgr === 'Все' ? 'Команда' : mgr) + ', с ' + dA + ' по ' + dB + ': конверсия в YSELL ');
+      add(RP.pct(pr['Конверсия']) + ' (' + RP.fmt(pr['Подключено к YSELL']) + ')', true);
+      if (mgr !== 'Все') add(' при ' + RP.pct(all['Конверсия']) + ' по команде');
+      add(', в отказ ушло ' + RP.pct(pr['Доля отказ']) + ', без движения ' + RP.pct(pr['Доля без движения']) + '. Сейчас ');
+      add(RP.fmt(hot.data.filter(onlyMgr).length) + ' горячих висят', true); add(', зависших ' + RP.pct(nr['Доля зависших']) + ' живой воронки.');
+    } else if ([pAll, md].some((d) => d.status === 'error')) take.textContent = 'Часть данных не загрузилась — подробности в «Источниках».';
+  });
+
+  document.getElementById('move-chips').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-kind]');
+    if (b) { RP.moveFilter = b.dataset.kind; dash.setParams({ view: RP.moveFilter }); }
+  });
+})();
+</script>
+
+<script>
+(() => {
+  function lineChart(boxId, legendId, series, height) {
+    const box = document.getElementById(boxId);
+    const k = dash.data('kpi');
+    box.replaceChildren();
+    if (k.status === 'error') { const f = document.createElement('div'); f.className = 'rp-fail'; f.textContent = 'Failed to load'; box.append(f); return; }
+    if (k.status !== 'ok' || !k.data.length) return;
+    document.getElementById(legendId).replaceChildren(...series.map((s) => { const sp = document.createElement('span'); const i = document.createElement('i'); i.style.background = s.color; sp.append(i, document.createTextNode(s.name)); return sp; }));
+    const rows = k.data.map((r) => ({ ...r, d: RP.parseD(r['Дата']) })).filter((r) => r.d);
+    const W = Math.max(280, box.clientWidth), H = height;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const maxV = d3.max(rows, (r) => d3.max(series, (s) => r[s.field] || 0)) || 1;
+    const y = d3.scaleLinear([0, maxV], [H - 24, 10]).nice();
+    const tmp = svg.append('text').attr('font-size', 12).text(d3.format(',')(y.domain()[1]));
+    const ml = tmp.node().getComputedTextLength() + 10; tmp.remove();
+    const lastLbl = Math.max(...series.map((s) => String(d3.format(',')(rows[rows.length - 1][s.field] || 0)).length)) * 8 + 10;
+    const x = d3.scaleUtc(d3.extent(rows, (r) => r.d), [ml, W - lastLbl]);
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', ml).attr('x2', W - lastLbl).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', ml - 6).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(d3.format(','));
+    const nt = Math.max(2, Math.floor((W - ml - lastLbl) / 70));
+    svg.append('g').attr('transform', `translate(0,${H - 24})`).call(d3.axisBottom(x).ticks(nt).tickFormat(d3.utcFormat('%d.%m')).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null)
+      .call((g) => { g.select('.domain').attr('stroke', 'var(--cds-chart-axis)'); g.selectAll('line').attr('stroke', 'var(--cds-chart-axis)'); g.selectAll('text').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11); });
+    [RP.parseD(RP.dateOf(dash.params().rangesA)), RP.parseD(RP.dateOf(dash.params().ranges))].forEach((d) => {
+      if (d) svg.append('line').attr('x1', x(d)).attr('x2', x(d)).attr('y1', 6).attr('y2', H - 24).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 3');
+    });
+    series.forEach((s) => {
+      svg.append('path').datum(rows.filter((r) => r[s.field] != null)).attr('fill', 'none').attr('stroke', s.color).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round').attr('d', d3.line().x((r) => x(r.d)).y((r) => y(r[s.field])));
+      const last = rows[rows.length - 1];
+      svg.append('text').attr('x', x(last.d) + 6).attr('y', y(last[s.field] || 0) + 4).attr('font-size', 11).attr('fill', s.color).text(d3.format(',')(last[s.field] || 0));
+    });
+    const tip = document.createElement('div'); tip.className = 'rp-tip'; tip.hidden = true; box.append(tip);
+    const dot = svg.append('g');
+    svg.append('rect').attr('x', ml).attr('y', 0).attr('width', W - ml - lastLbl).attr('height', H - 24).attr('fill', 'transparent')
+      .on('mousemove', (ev) => {
+        const [mx] = d3.pointer(ev); const t = x.invert(mx);
+        const r = rows[d3.minIndex(rows, (q) => Math.abs(q.d - t))];
+        dot.selectAll('*').remove();
+        series.forEach((s) => dot.append('circle').attr('cx', x(r.d)).attr('cy', y(r[s.field] || 0)).attr('r', 3.5).attr('fill', s.color));
+        tip.replaceChildren(); const dd = document.createElement('div'); dd.className = 'rp-tip-d'; dd.textContent = r['Дата']; tip.append(dd);
+        series.forEach((s) => { const l = document.createElement('div'); const i = document.createElement('i'); i.style.cssText = `display:inline-block;width:.5rem;height:.5rem;border-radius:2px;margin-right:.35rem;background:${s.color}`; l.append(i, document.createTextNode(s.name + ': ' + d3.format(',')(r[s.field] ?? 0))); tip.append(l); });
+        tip.hidden = false;
+        const px = x(r.d) / W * box.clientWidth; const tw = tip.offsetWidth;
+        tip.style.left = Math.min(Math.max(0, px + 10), box.clientWidth - tw) + 'px'; tip.style.top = '4px';
+      })
+      .on('mouseleave', () => { tip.hidden = true; dot.selectAll('*').remove(); });
+  }
+
+  function stageChart() {
+    const box = document.getElementById('stage-chart');
+    const d = dash.data('day');
+    box.replaceChildren();
+    if (d.status === 'error') { const f = document.createElement('div'); f.className = 'rp-fail'; f.textContent = 'Failed to load'; box.append(f); return; }
+    if (d.status !== 'ok') return;
+    const mgr = RP.mgr();
+    const order = d.data.filter((r) => r.section === 'По стадиям').map((r) => r['Стадия']);
+    const deals = d.data.filter((r) => r.section === 'Все сделки в работе' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']) && (mgr === 'Все' || r['Менеджер'] === mgr));
+    const cnt = d3.rollup(deals, (v) => v.length, (r) => r['Стадия']);
+    const rows = order.map((s) => ({ 'Стадия': s, 'Сделок': cnt.get(s) || 0 }));
+    if (!rows.length) return;
+    const W = Math.max(280, box.clientWidth), bh = 18, gap = 6;
+    const H = rows.length * (bh + gap) + 6;
+    box.style.minHeight = H + 'px';
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const meas = svg.append('g');
+    const lw = d3.max(rows, (r) => meas.append('text').attr('font-size', 12).text(r['Стадия']).node().getComputedTextLength()) + 12; meas.remove();
+    const labelW = Math.min(lw, W * 0.45);
+    const x = d3.scaleLinear([0, d3.max(rows, (r) => r['Сделок']) || 1], [labelW, W - 44]);
+    const crit = (r) => RP.HOT.includes(r['Стадия']) || r['Стадия'] === 'Клиент перестал отвечать';
+    const g = svg.selectAll('g.r').data(rows).join('g').attr('transform', (r, i) => `translate(0,${i * (bh + gap) + 3})`);
+    g.append('text').attr('x', labelW - 8).attr('y', bh / 2 + 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'var(--color-fg)').text((r) => r['Стадия']);
+    g.append('rect').attr('x', labelW).attr('y', 0).attr('height', bh).attr('rx', 4).attr('width', (r) => Math.max(r['Сделок'] ? 2 : 0, x(r['Сделок']) - labelW))
+      .attr('fill', (r) => r['Стадия'] === RP.WIN ? 'var(--color-ok)' : crit(r) ? 'var(--cds-chart-status-critical)' : 'var(--cds-chart-muted)');
+    g.append('text').attr('x', (r) => x(r['Сделок']) + 6).attr('y', bh / 2 + 4).attr('font-size', 12).attr('fill', 'var(--color-fg-muted)').text((r) => d3.format(',')(r['Сделок']));
+  }
+
+  const drawCharts = () => {
+    lineChart('trend-chart', 'trend-legend', [
+      { field: 'В работе', name: 'В работе', color: dash.colors[0] },
+      { field: 'Перестал отвечать', name: 'Перестал отвечать', color: dash.colors[2] },
+      { field: 'Подключено к YSELL', name: 'Подключено к YSELL', color: dash.colors[3] },
+    ], 260);
+    lineChart('ghost-chart', 'ghost-legend', [
+      { field: 'Перестал отвечать', name: 'Перестал отвечать', color: 'var(--cds-chart-status-critical)' },
+      { field: 'Ожидаем ответа', name: 'Ожидаем ответа', color: 'var(--cds-chart-muted)' },
+    ], 200);
+    stageChart();
+  };
+  dash.onData(drawCharts);
+  document.addEventListener('toggle', (e) => { if (e.target.querySelector && e.target.querySelector('.rp-chart, .rp-stages')) drawCharts(); }, true);
+})();
+</script>
+
+<script>
+window.RP_tableLoader = {
+  description: 'Лист как таблица: первая строка — названия колонок; числовые колонки — числами.',
+  fn: ({ answer }) => {
+    const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+    if (a && a.error) throw new Error(a.error.message || String(a.error));
+    const v = (a && a.values) || [];
+    if (!v.length) throw new Error('Лист пустой — скрипт выгрузки ещё не отработал');
+    const head = v[0];
+    const NUM = new Set(['Минут на квалификации', 'Минут до первого касания', 'Касаний с 01.09', 'Открытых дел', 'Просрочено дел']);
+    const rows = v.slice(1).filter((r) => r && r[0]).map((r) => { const o = {}; head.forEach((c, j) => { const x = r[j] ?? ''; o[c] = NUM.has(c) ? (x === '' ? null : Number(x)) : String(x); }); return o; });
+    return { data: rows, columns: head };
+  },
+};
+dash.loader('deals_detail', window.RP_tableLoader);
+dash.loader('acts', window.RP_tableLoader);
+
+window.RP_EXCL = ['Юлия Перелет', 'Assistant Assistant'];
+
+dash.onData(() => {
+  const mgr = RP.mgr();
+  const only = (r) => mgr === 'Все' || r['Менеджер'] === mgr;
+  const box = document.getElementById('flag-sum');
+  if (!box) return;
+  const put = (k, v, bad) => { const el = box.querySelector('[data-k="' + k + '"]'); if (!el) return; el.textContent = v; el.classList.remove('rp-good', 'rp-bad', 'rp-warn'); if (bad != null) el.classList.add(bad); };
+  const cnt = (id, k) => { const d = dash.data(id); if (d.status === 'ok') { const n = d.data.filter(only).length; put(k, n, n ? 'rp-bad' : 'rp-good'); } };
+  cnt('hot_stuck', 'hot'); cnt('no_touch', 'notouch'); cnt('no_next', 'nonext');
+  const dis = dash.data('discipline');
+  if (dis.status === 'ok') { const r = dis.data.find((x) => x['Менеджер'] === mgr); const n = r ? r['Просрочено дел'] || 0 : 0; put('overdue', n, n ? 'rp-bad' : 'rp-good'); }
+  const w = dash.data('workday');
+  if (w.status === 'ok') {
+    const rs = w.data.filter((r) => only(r) && (mgr !== 'Все' || r['Менеджер'] !== 'Юлия Мартынова'));
+    if (!rs.length) { put('score', '—'); put('scoresub', 'касаний не было'); }
+    else {
+      const avg = rs.reduce((a, r) => a + r['Оценка'], 0) / rs.length;
+      put('score', (mgr === 'Все' ? avg.toFixed(1).replace('.', ',') : String(rs[0]['Оценка'])) + '/5', avg >= 4.5 ? 'rp-good' : avg >= 3.5 ? null : avg >= 2.5 ? 'rp-warn' : 'rp-bad');
+      const day = rs[0]['День'];
+      const low = rs.filter((r) => r['Оценка'] <= 3).length;
+      put('scoresub', (mgr === 'Все' ? 'средняя по команде, ' + (low ? low + ' с оценкой 3 и ниже' : 'все 4+') : (rs[0]['Обратить внимание'] || 'замечаний нет')) + ' · ' + day.slice(8, 10) + '.' + day.slice(5, 7));
+    }
+  }
+});
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a.rp-jump');
+  if (!a) return;
+  const t = document.querySelector(a.getAttribute('href'));
+  if (t && t.tagName === 'DETAILS') { e.preventDefault(); t.open = true; t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+});
+
+dash.calc('workday', {
+  inputs: ['acts', 'day'],
+  title: 'Рабочий день менеджеров (пилот)',
+  description: 'Последний день перед датой конечного среза, в котором были касания. По каждому менеджеру (без Юлии Перелет и Assistant Assistant): касания, звонки, письма и чаты, время первого и последнего касания, самая длинная пауза между соседними касаниями, замечания и оценка дня 1–5: 5 минус 1 за начало позже 10:30, конец раньше 17:00, паузу больше 90 мин, касаний меньше половины медианы команды (без квалификатора) и ещё минус 1 при меньше четверти; для квалификатора Юлии Мартыновой объём не оценивается.',
+  fn: (acts, day) => {
+    const b = (day[0] || {})['Срез'];
+    if (!b) return [];
+    const t = acts.filter((r) => r['Касание'] === 'да' && r['Создано'] < b.slice(0, 10) && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Ответственный']));
+    const d = t.reduce((m, r) => (r['Создано'].slice(0, 10) > m ? r['Создано'].slice(0, 10) : m), '');
+    if (!d) return [];
+    const by = {};
+    t.filter((r) => r['Создано'].slice(0, 10) === d).forEach((r) => { (by[r['Ответственный']] = by[r['Ответственный']] || []).push(r); });
+    const mins = (s) => Number(s.slice(11, 13)) * 60 + Number(s.slice(14, 16));
+    const QUAL = 'Юлия Мартынова';
+    const vol = Object.entries(by).filter(([n]) => n !== QUAL).map(([, rs]) => rs.length).sort((x, y) => x - y);
+    const med = vol.length ? (vol.length % 2 ? vol[(vol.length - 1) / 2] : (vol[vol.length / 2 - 1] + vol[vol.length / 2]) / 2) : 0;
+    return Object.entries(by).map(([n, rs]) => {
+      const ts = rs.map((r) => r['Создано'].slice(11, 16)).sort();
+      let gap = 0, gapAt = '';
+      for (let i = 1; i < ts.length; i++) { const g = mins(ts[i]) - mins(ts[i - 1]); if (g > gap) { gap = g; gapAt = ts[i - 1] + '–' + ts[i]; } }
+      const notes = [];
+      if (ts[0] > '10:30') notes.push('начал в ' + ts[0]);
+      if (ts[ts.length - 1] < '17:00') notes.push('после ' + ts[ts.length - 1] + ' активности нет');
+      if (gap > 90) notes.push('пауза ' + gapAt);
+      let score = 5 - notes.length;
+      if (n !== QUAL && med) {
+        if (rs.length < med / 2) { score--; notes.push('мало касаний: ' + rs.length + ' при медиане ' + med); }
+        if (rs.length < med / 4) score--;
+      }
+      return {
+        'День': d, 'Менеджер': n, 'Оценка': Math.max(1, score), 'Медиана команды': med, 'Касаний': rs.length,
+        'Звонков': rs.filter((r) => r['Тип'] === 'Звонок').length,
+        'Писем и чатов': rs.filter((r) => r['Тип'] === 'Письмо' || r['Тип'] === 'Чат').length,
+        'Первое': ts[0], 'Последнее': ts[ts.length - 1], 'Макс. пауза, мин': gap,
+        'Обратить внимание': notes.join('; '),
+      };
+    }).sort((x, y) => y['Оценка'] - x['Оценка'] || y['Касаний'] - x['Касаний']);
+  },
+});
+
+dash.onData(() => {
+  const t = document.querySelector('table[data-source="workday"]');
+  const tb = t.querySelector('tbody');
+  const d = dash.data('workday');
+  tb.replaceChildren();
+  if (d.status !== 'ok') return;
+  const mgr = RP.mgr();
+  const rows = d.data.filter((r) => mgr === 'Все' || r['Менеджер'] === mgr);
+  const day = (d.data[0] || {})['День'];
+  document.getElementById('workday-title').textContent = 'Рабочий день менеджеров' + (day ? ' — ' + day.slice(8, 10) + '.' + day.slice(5, 7) + '.' + day.slice(0, 4) : '');
+  const cell = (v, cls) => { const e = document.createElement('td'); e.textContent = v == null ? '—' : v; if (cls) e.className = cls; return e; };
+  if (!rows.length) { const tr = document.createElement('tr'); const c = cell('Касаний в этот день нет.'); c.colSpan = 9; tr.append(c); tb.append(tr); return; }
+  rows.forEach((r) => {
+    const tr = document.createElement('tr'); tr.dataset.key = r['Менеджер'];
+    const sc = r['Оценка'];
+    tr.append(cell(r['Менеджер'] === 'Юлия Мартынова' ? r['Менеджер'] + ' · квалификатор' : r['Менеджер']), cell(sc + '/5', 'rp-n rp-score ' + (sc >= 5 ? 'rp-good' : sc === 4 ? '' : sc === 3 ? 'rp-warn' : 'rp-bad')), cell(r['Касаний'], 'rp-n'), cell(r['Звонков'], 'rp-n'), cell(r['Писем и чатов'], 'rp-n'),
+      cell(r['Первое'], 'rp-n' + (r['Первое'] > '10:30' ? ' rp-bad' : '')),
+      cell(r['Последнее'], 'rp-n' + (r['Последнее'] < '17:00' ? ' rp-bad' : '')),
+      cell(r['Макс. пауза, мин'], 'rp-n' + (r['Макс. пауза, мин'] > 90 ? ' rp-bad' : '')),
+      cell(r['Обратить внимание'] || 'ок', r['Обратить внимание'] ? 'rp-bad' : 'rp-good'));
+    tb.append(tr);
+  });
+});
+
+dash.calc('act_period', {
+  inputs: ['acts', 'dayA', 'day', 'mgr_day'],
+  title: 'Касания за период',
+  description: 'Исходящие звонки, письма, сообщения и встречи (колонка «Касание» = да) с датой создания между двумя срезами, по ответственному и всего («Все»; без Юлии Перелет, Assistant Assistant и квалификатора Юлии Мартыновой). В день = касания / дней в периоде. На живую сделку = касания / живая воронка на конец периода.',
+  fn: (acts, dayA, day, mgr_day) => {
+    const a = (dayA[0] || {})['Срез'], b = (day[0] || {})['Срез'];
+    if (!a || !b) return [];
+    const days = Math.max(1, (new Date(b.replace(' ', 'T') + ':00+03:00') - new Date(a.replace(' ', 'T') + ':00+03:00')) / 864e5);
+    const by = {};
+    const add = (n, r) => { const o = by[n] = by[n] || { 'Менеджер': n, 'Касаний': 0, 'Звонков': 0, 'Писем': 0, 'Чатов': 0, 'Встреч': 0 }; o['Касаний']++; if (r['Тип'] === 'Звонок') o['Звонков']++; if (r['Тип'] === 'Письмо') o['Писем']++; if (r['Тип'] === 'Чат') o['Чатов']++; if (r['Тип'] === 'Встреча') o['Встреч']++; };
+    acts.filter((r) => r['Касание'] === 'да' && r['Создано'] > a && r['Создано'] <= b && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Ответственный']))
+      .forEach((r) => { add(r['Ответственный'], r); if (r['Ответственный'] !== 'Юлия Мартынова') add('Все', r); });
+    mgr_day.forEach((m) => { if (!by[m['Менеджер']]) by[m['Менеджер']] = { 'Менеджер': m['Менеджер'], 'Касаний': 0, 'Звонков': 0, 'Писем': 0, 'Чатов': 0, 'Встреч': 0 }; });
+    return Object.values(by).map((o) => { const live = (mgr_day.find((m) => m['Менеджер'] === o['Менеджер']) || {})['Живая воронка'] || 0; return { ...o, 'Касаний в день': Math.round(o['Касаний'] / days * 10) / 10, 'На живую сделку': live ? Math.round(o['Касаний'] / live * 10) / 10 : null }; })
+      .sort((x, y) => (x['Менеджер'] === 'Все' ? -1 : y['Менеджер'] === 'Все' ? 1 : y['Касаний'] - x['Касаний']));
+  },
+});
+
+dash.calc('speed', {
+  inputs: ['deals_detail', 'dayA', 'day'],
+  title: 'Скорость реакции и квалификации',
+  description: 'Сделки, поступившие в воронку между двумя срезами, по менеджеру и всего («Все»; без Юлии Перелет и Assistant Assistant; квалификатор Юлия Мартынова в «Все» не входит): сколько новых, медиана минут до первого касания, сколько без касания; по прошедшим через «Новые»/«Квалификация» — медиана минут на квалификации и доля ушедших с неё за 60 минут и быстрее.',
+  fn: (deals_detail, dayA, day) => {
+    const a = (dayA[0] || {})['Срез'], b = (day[0] || {})['Срез'];
+    if (!a || !b) return [];
+    const med = (xs) => { const s = xs.filter((x) => x != null).sort((p, q) => p - q); if (!s.length) return null; const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : Math.round((s[m - 1] + s[m]) / 2); };
+    const groups = {};
+    deals_detail.filter((r) => r['Поступила'] > a && r['Поступила'] <= b && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']))
+      .forEach((r) => { (groups[r['Менеджер']] = groups[r['Менеджер']] || []).push(r); (groups['Все'] = groups['Все'] || []).push(r); });
+    return Object.entries(groups).map(([n, rs]) => {
+      const q = rs.filter((r) => r['Через квалификацию'] === 'да' && r['Ушла с квалификации']);
+      return {
+        'Менеджер': n, 'Новых': rs.length,
+        'Реакция, мин (медиана)': med(rs.map((r) => r['Минут до первого касания'])),
+        'Без касания': rs.filter((r) => !r['Первое касание']).length,
+        'Квалификация, мин (медиана)': med(q.map((r) => r['Минут на квалификации'])),
+        'Квалифицировано за 60 мин': q.length ? q.filter((r) => r['Минут на квалификации'] <= 60).length / q.length : null,
+      };
+    });
+  },
+});
+
+window.RP_LIVE = ['Новые', 'Квалификация', 'Small сегмент', 'Ожидаем ответа', 'Клиент не ответил', 'В проработке', 'Ответ получен', 'РАЗБУДИТЬ', 'Готов стать клиентом', 'Подписание договора', 'Оплата депозита'];
+
+dash.calc('no_next', {
+  inputs: ['deals_detail'],
+  title: 'Без следующего шага',
+  description: 'Сделки на живых стадиях (не отказ, не мусор, не YSELL), по которым нет ни одного открытого дела.',
+  fn: (deals_detail) => deals_detail.filter((r) => ['Новые', 'Квалификация', 'Small сегмент', 'Ожидаем ответа', 'Клиент не ответил', 'В проработке', 'Ответ получен', 'РАЗБУДИТЬ', 'Готов стать клиентом', 'Подписание договора', 'Оплата депозита'].includes(r['Стадия сейчас']) && !r['Открытых дел'] && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']))
+    .map((r) => ({ 'ID сделки': r['ID сделки'], 'Сделка': r['Сделка'], 'Ссылка': r['Ссылка'], 'Стадия сейчас': r['Стадия сейчас'], 'Последнее касание': r['Последнее касание'] || 'нет', 'Менеджер': r['Менеджер'] })),
+});
+
+dash.calc('no_touch', {
+  inputs: ['deals_detail'],
+  title: 'Без единого касания',
+  description: 'Сделки на живых стадиях, поступившие с 01.09.2026, по которым нет ни одного исходящего касания.',
+  fn: (deals_detail) => deals_detail.filter((r) => ['Новые', 'Квалификация', 'Small сегмент', 'Ожидаем ответа', 'Клиент не ответил', 'В проработке', 'Ответ получен', 'РАЗБУДИТЬ', 'Готов стать клиентом', 'Подписание договора', 'Оплата депозита'].includes(r['Стадия сейчас']) && r['Поступила'] >= '2026-09-01' && !r['Касаний с 01.09'] && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер']))
+    .sort((x, y) => (x['Поступила'] < y['Поступила'] ? -1 : 1))
+    .map((r) => ({ 'ID сделки': r['ID сделки'], 'Сделка': r['Сделка'], 'Ссылка': r['Ссылка'], 'Стадия сейчас': r['Стадия сейчас'], 'Поступила': r['Поступила'], 'Менеджер': r['Менеджер'] })),
+});
+
+dash.calc('discipline', {
+  inputs: ['deals_detail'],
+  title: 'Дисциплина по менеджерам',
+  description: 'По менеджеру и всего («Все»; без Юлии Перелет, Assistant Assistant; Юлия Мартынова в «Все» не входит): живые сделки без открытых дел, просроченные дела, и по сделкам с 01.09 на стадии «Клиент перестал отвечать» — медиана касаний и доля с 0–1 касанием.',
+  fn: (deals_detail) => {
+    const LIVE = ['Новые', 'Квалификация', 'Small сегмент', 'Ожидаем ответа', 'Клиент не ответил', 'В проработке', 'Ответ получен', 'РАЗБУДИТЬ', 'Готов стать клиентом', 'Подписание договора', 'Оплата депозита'];
+    const med = (xs) => { const s = xs.slice().sort((p, q) => p - q); if (!s.length) return null; const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+    const g = {};
+    deals_detail.filter((r) => !['Юлия Перелет', 'Assistant Assistant'].includes(r['Менеджер'])).forEach((r) => { (g[r['Менеджер']] = g[r['Менеджер']] || []).push(r); if (r['Менеджер'] !== 'Юлия Мартынова') (g['Все'] = g['Все'] || []).push(r); });
+    return Object.entries(g).map(([n, rs]) => {
+      const ghost = rs.filter((r) => r['Стадия сейчас'] === 'Клиент перестал отвечать' && r['Поступила'] >= '2026-09-01');
+      const t = ghost.map((r) => r['Касаний с 01.09'] || 0);
+      return {
+        'Менеджер': n,
+        'Без следующего шага': rs.filter((r) => LIVE.includes(r['Стадия сейчас']) && !r['Открытых дел']).length,
+        'Просрочено дел': rs.reduce((s, r) => s + (r['Просрочено дел'] || 0), 0),
+        'Перестал отвечать': ghost.length,
+        'Касаний до свалки, медиана': med(t),
+        'Доля с 0–1 касанием': ghost.length ? t.filter((x) => x <= 1).length / ghost.length : null,
+      };
+    }).sort((x, y) => (x['Менеджер'] === 'Все' ? -1 : y['Менеджер'] === 'Все' ? 1 : y['Без следующего шага'] - x['Без следующего шага']));
+  },
+});
+
+dash.calc('qual_list', {
+  inputs: ['deals_detail'],
+  title: 'Очередь на квалификацию (минуты)',
+  description: 'Сделки, которые на момент утренней выгрузки стоят на «Новые» или «Квалификация», и сколько минут они там.',
+  fn: (deals_detail) => deals_detail.filter((r) => ['Новые', 'Квалификация'].includes(r['Стадия сейчас']))
+    .sort((x, y) => (y['Минут на квалификации'] || 0) - (x['Минут на квалификации'] || 0))
+    .map((r) => ({ 'ID сделки': r['ID сделки'], 'Сделка': r['Сделка'], 'Ссылка': r['Ссылка'], 'Стадия сейчас': r['Стадия сейчас'], 'Минут на квалификации': r['Минут на квалификации'], 'Менеджер': r['Менеджер'] })),
+});
+
+dash.calc('qual_now', {
+  inputs: ['qual_list'],
+  title: 'Ждут квалификации',
+  description: 'Сколько лидов в очереди на квалификацию и сколько минут ждёт самый старый.',
+  fn: (qual_list) => [{ 'Ждут': qual_list.length, 'Ждёт дольше всех, мин': qual_list.length ? Math.max(...qual_list.map((r) => r['Минут на квалификации'] || 0)) : 0 }],
+});
+</script>
+
+<script>
+(() => {
+  const td = (text, cls) => { const e = document.createElement('td'); e.textContent = text; if (cls) e.className = cls; return e; };
+  const clean = (s) => String(s || '').replace(/^\s*\/\s*/, '').replace(/\s*\/\s*$/, '') || 'Сделка';
+  const dealCell = (r) => { const e = td('', 'rp-deal'); if (/^https:\/\//.test(r['Ссылка'] || '')) { const a = document.createElement('a'); a.href = r['Ссылка']; a.target = '_blank'; a.rel = 'noopener'; a.textContent = clean(r['Сделка']); e.append(a); } else e.textContent = clean(r['Сделка']); return e; };
+  const num = (v, suf) => (v == null ? '—' : RP.fmt(v) + (suf || ''));
+  const setTxt = (el, t, cls) => { el.textContent = t; el.classList.remove('dash-skeleton', 'rp-good', 'rp-bad', 'rp-warn'); if (cls) el.classList.add(cls); };
+  function fill(id, cols, opts = {}) {
+    const t = document.querySelector('table[data-source="' + id + '"]'); if (!t) return [];
+    const tb = t.querySelector('tbody'); tb.replaceChildren();
+    const d = dash.data(id); const box = t.parentElement; box.querySelector('.rp-fail')?.remove();
+    if (d.status === 'error') { const f = document.createElement('div'); f.className = 'rp-fail'; f.textContent = 'Failed to load'; box.append(f); return []; }
+    if (d.status !== 'ok') return [];
+    let rows = d.data || []; if (opts.filter) rows = rows.filter(opts.filter);
+    if (!rows.length) { const tr = document.createElement('tr'); const c = td(opts.empty || 'Нет — хорошо.', 'rp-good'); c.colSpan = cols.length; tr.append(c); tb.append(tr); return rows; }
+    rows.forEach((r) => { const tr = document.createElement('tr'); cols.forEach((c) => tr.append(c(r))); tr.dataset.key = r[opts.key]; if (opts.rowClass) { const c = opts.rowClass(r); if (c) tr.classList.add(c); } tb.append(tr); });
+    return rows;
+  }
+
+  dash.onData(() => {
+    const mgr = RP.mgr();
+    const onlyMgr = (r) => mgr === 'Все' || r['Менеджер'] === mgr;
+    const noExcl = (r) => !RP_EXCL.includes(r['Менеджер']);
+
+    // tiles: act_period, speed (by manager)
+    ['act_period', 'speed'].forEach((src) => {
+      const d = dash.data(src);
+      const row = d.status === 'ok' ? d.data.find((r) => r['Менеджер'] === mgr) : null;
+      document.querySelectorAll('#period [data-source="' + src + '"][data-field], #qual [data-source="' + src + '"][data-field]').forEach((el) => {
+        if (el.closest('table')) return;
+        const inQual = !!el.closest('#qual');
+        const r = inQual ? (d.status === 'ok' ? d.data.find((x) => x['Менеджер'] === 'Все') : null) : row;
+        el.setAttribute('data-where', 'Менеджер=' + encodeURIComponent(inQual ? 'Все' : mgr));
+        const f = el.getAttribute('data-field');
+        const v = r ? r[f] : null;
+        if (v == null) { setTxt(el, '—'); return; }
+        if (f === 'Квалифицировано за 60 мин') setTxt(el, RP.pct(v), v >= 0.8 ? 'rp-good' : v < 0.5 ? 'rp-bad' : 'rp-warn');
+        else if (f === 'Без касания') setTxt(el, RP.fmt(v), v > 0 ? 'rp-bad' : 'rp-good');
+        else if (f === 'Реакция, мин (медиана)') setTxt(el, RP.fmt(v), v > 60 ? 'rp-bad' : v > 30 ? 'rp-warn' : 'rp-good');
+        else if (f === 'Квалификация, мин (медиана)') setTxt(el, RP.fmt(v), v > 60 ? 'rp-bad' : v > 30 ? 'rp-warn' : 'rp-good');
+        else setTxt(el, RP.fmt(v));
+      });
+    });
+    const qn = dash.data('qual_now');
+    document.querySelectorAll('[data-source="qual_now"]').forEach((el) => {
+      const r = qn.status === 'ok' && qn.data ? qn.data[0] : null; const f = el.getAttribute('data-field');
+      if (!r) { setTxt(el, '—'); return; }
+      setTxt(el, RP.fmt(r[f]), f === 'Ждёт дольше всех, мин' ? (r[f] > 60 ? 'rp-bad' : 'rp-good') : (r[f] > 0 ? 'rp-warn' : 'rp-good'));
+    });
+
+    // activity table
+    const sp = dash.data('speed');
+    const spRow = (n) => (sp.status === 'ok' ? sp.data.find((r) => r['Менеджер'] === n) : null) || {};
+    fill('act_period', [
+      (r) => td(r['Менеджер'] === 'Все' ? 'Вся команда' : r['Менеджер']), (r) => td(num(r['Касаний']), 'rp-n'), (r) => td(num(r['Касаний в день']), 'rp-n'), (r) => td(num(r['На живую сделку']), 'rp-n'),
+      (r) => td(num(r['Звонков']), 'rp-n'), (r) => td(num(r['Писем']), 'rp-n'), (r) => td(num(r['Чатов']), 'rp-n'),
+      (r) => td(num(spRow(r['Менеджер'])['Новых']), 'rp-n'),
+      (r) => { const v = spRow(r['Менеджер'])['Реакция, мин (медиана)']; return td(num(v), 'rp-n' + (v > 60 ? ' rp-bad' : '')); },
+      (r) => { const v = spRow(r['Менеджер'])['Без касания']; return td(num(v), 'rp-n' + (v > 0 ? ' rp-bad' : '')); },
+    ], { key: 'Менеджер', filter: (r) => noExcl(r) && r['Менеджер'] !== 'Юлия Мартынова', rowClass: (r) => (r['Менеджер'] === mgr && mgr !== 'Все' ? 'rp-sel' : null) });
+
+    // flags
+    [['no_touch', 'flag-notouch', [dealCell, (r) => td(r['Стадия сейчас']), (r) => td(r['Поступила']), (r) => td(r['Менеджер'])]],
+     ['no_next', 'flag-nonext', [dealCell, (r) => td(r['Стадия сейчас']), (r) => td(r['Последнее касание']), (r) => td(r['Менеджер'])]]].forEach(([id, card, cols]) => {
+      const rows = fill(id, cols, { key: 'ID сделки', filter: onlyMgr });
+      const cnt = document.querySelector('#' + card + ' .rp-count');
+      if (dash.data(id).status === 'ok') { setTxt(cnt, RP.fmt(rows.length), rows.length ? 'rp-bad' : 'rp-good'); document.getElementById(card).classList.toggle('rp-alert', rows.length > 0); } else cnt.textContent = '—';
+    });
+    fill('discipline', [
+      (r) => td(r['Менеджер'] === 'Все' ? 'Вся команда' : r['Менеджер']), (r) => td(num(r['Без следующего шага']), 'rp-n' + (r['Без следующего шага'] ? ' rp-bad' : '')), (r) => td(num(r['Просрочено дел']), 'rp-n' + (r['Просрочено дел'] ? ' rp-bad' : '')),
+      (r) => td(num(r['Перестал отвечать']), 'rp-n'), (r) => td(num(r['Касаний до свалки, медиана']), 'rp-n'), (r) => td(r['Доля с 0–1 касанием'] == null ? '—' : RP.pct(r['Доля с 0–1 касанием']), 'rp-n'),
+    ], { key: 'Менеджер', filter: (r) => noExcl(r) && r['Менеджер'] !== 'Юлия Мартынова', rowClass: (r) => (r['Менеджер'] === mgr && mgr !== 'Все' ? 'rp-sel' : (r['Менеджер'] !== 'Все' && r['Перестал отвечать'] >= 5 && r['Доля с 0–1 касанием'] >= 0.5 ? 'rp-hl' : null)) });
+
+    // qualification queue in minutes
+    fill('qual_list', [dealCell, (r) => td(r['Стадия сейчас']), (r) => td(num(r['Минут на квалификации']), 'rp-n'), (r) => td(r['Менеджер'])], { key: 'ID сделки', empty: 'Очередь пустая.', rowClass: (r) => (r['Минут на квалификации'] > 60 ? 'rp-hl' : null) });
+  });
+})();
+</script>
+
+<script>
+(() => {
+  const box = document.getElementById('rp-periods');
+  const custom = document.getElementById('rp-custom');
+  let showCustom = false;
+  const P = [['day', 'Последний день', 1], ['week', 'Неделя', 7], ['2w', '2 недели', 14], ['month', 'Месяц', 30], ['mtd', 'С начала месяца', 'mtd']];
+  const datesOf = () => { const s = dash.data('svod'); return s.status === 'ok' ? s.data.map((r) => r['Дата']).filter((d) => RP.parseD(d)).sort((a, b) => RP.parseD(b) - RP.parseD(a)) : []; };
+  const startFor = (dates, b, n) => { const older = dates.filter((d) => RP.parseD(d) < RP.parseD(b)); if (!older.length) return null; if (n === 'mtd') { const bd = RP.parseD(b); const first = Date.UTC(bd.getUTCFullYear(), bd.getUTCMonth(), 1); return older.find((d) => RP.parseD(d) < first) || older[older.length - 1]; }
+    if (n == null) return older[older.length - 1]; const t = RP.parseD(b) - n * 864e5; return older.find((d) => RP.parseD(d) <= t) || older[older.length - 1]; };
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-p]'); if (!b) return;
+    if (b.dataset.p === 'custom') { showCustom = !showCustom; custom.hidden = !showCustom; dash.setParams({ view: 'custom' + Date.now() }); return; }
+    const dates = datesOf(); if (!dates.length) return;
+    const p = P.find((x) => x[0] === b.dataset.p); const end = dates[0]; const a = startFor(dates, end, p[2]);
+    showCustom = false; custom.hidden = true;
+    dash.setParams({ ranges: RP.rangeOf(end), rangesA: a ? RP.rangeOf(a) : dash.params().rangesA });
+  });
+  dash.onData(() => {
+    const dates = datesOf(); if (!dates.length) return;
+    const B = RP.dateOf(dash.params().ranges), A = RP.dateOf(dash.params().rangesA);
+    const active = B === dates[0] ? (P.find((p) => startFor(dates, dates[0], p[2]) === A) || [])[0] : null;
+    const isCustom = showCustom || !active;
+    if (!active && !showCustom) custom.hidden = false;
+    box.replaceChildren(...P.map((p) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.p = p[0]; b.textContent = p[1]; b.setAttribute('aria-pressed', String(!showCustom && p[0] === active)); return b; }),
+      (() => { const b = document.createElement('button'); b.type = 'button'; b.dataset.p = 'custom'; b.textContent = isCustom ? 'Свои даты: ' + (A || '…') + ' — ' + (B || '…') : 'Свои даты'; b.setAttribute('aria-pressed', String(isCustom)); return b; })());
+  });
+})();
+</script>
+
+<script>
+dash.calc('mgr_delta', {
+  inputs: ['mgr_day', 'mgr_dayA'],
+  title: 'Изменение за период',
+  description: 'Разница показателей «Сейчас в воронке» между концом и началом выбранного периода, по менеджеру и всего.',
+  fn: (mgr_day, mgr_dayA) => {
+    const F = ['Живая воронка', 'Зависшие', 'Подключены к YSELL', 'Отказ и перестал отвечать', 'На квалификации больше дня'];
+    return mgr_day.map((r) => { const a = mgr_dayA.find((x) => x['Менеджер'] === r['Менеджер']) || {}; const o = { 'Менеджер': r['Менеджер'] }; F.forEach((f) => { o['Δ ' + f] = (r[f] || 0) - (a[f] || 0); }); return o; });
+  },
+});
+dash.onData(() => {
+  const mgr = RP.mgr(); const dA = RP.dateOf(dash.params().rangesA);
+  const d = dash.data('mgr_delta'); const row = d.status === 'ok' ? d.data.find((r) => r['Менеджер'] === mgr) : null;
+  const GOOD = new Set(['Δ Подключены к YSELL']); const BAD = new Set(['Δ Зависшие', 'Δ Отказ и перестал отвечать', 'Δ На квалификации больше дня']);
+  document.querySelectorAll('[data-source="mgr_delta"]').forEach((el) => {
+    const f = el.getAttribute('data-field'); el.setAttribute('data-where', 'Менеджер=' + encodeURIComponent(mgr));
+    el.classList.remove('rp-good', 'rp-bad');
+    if (!row || row[f] == null) { el.textContent = '—'; return; }
+    const v = row[f];
+    el.classList.remove('dash-skeleton');
+    el.textContent = (v > 0 ? '+' : v < 0 ? '−' : '±') + RP.fmt(Math.abs(v)) + (el.classList.contains('rp-dnum') ? '' : ' с ' + (dA || '…'));
+    if (v !== 0 && GOOD.has(f)) el.classList.add(v > 0 ? 'rp-good' : 'rp-bad');
+    if (v !== 0 && BAD.has(f)) el.classList.add(v > 0 ? 'rp-bad' : 'rp-good');
+  });
+});
+</script>
+
+<script>
+(() => {
+  const box = document.getElementById('legend-box');
+  const go = () => { box.open = true; box.scrollIntoView({ block: 'start' }); dash.setLink('legend'); };
+  document.getElementById('legend-link').addEventListener('click', (e) => { e.preventDefault(); go(); });
+  if (location.hash === '#legend') go();
+})();
+</script>

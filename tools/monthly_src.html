@@ -1,0 +1,854 @@
+<style>
+#dash-root .rm { display: flex; flex-direction: column; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); font-variant-numeric: tabular-nums; }
+#dash-root .rm-head { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+#dash-root .rm-head h1 { margin: 0; font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); }
+#dash-root .rm-take { margin: var(--cds-gap-xs) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 75ch; }
+#dash-root .rm-take b { color: var(--color-fg); font-weight: 600; }
+#dash-root .rm-pills { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); }
+#dash-root .rm-pills button { font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: var(--cds-pad-xs) var(--cds-pad-md); cursor: pointer; }
+#dash-root .rm-pills button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+#dash-root .rm-pills button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+#dash-root .rm-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-md); }
+#dash-root .rm-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); min-width: 0; }
+#dash-root .rm-lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rm-num { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.1; }
+#dash-root .rm-sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rm-good { color: var(--color-ok); }
+#dash-root .rm-bad { color: var(--color-bad); }
+#dash-root .rm-sec { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+#dash-root .rm-sec > h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+#dash-root .rm-sec > p { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); max-width: 85ch; }
+#dash-root .rm-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
+#dash-root .rm-card h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+#dash-root .rm-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rm-tbl { overflow: auto; }
+#dash-root .rm-tbl table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
+#dash-root .rm-tbl th { text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+#dash-root .rm-tbl td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); }
+#dash-root .rm-tbl .rm-n { text-align: right; white-space: nowrap; }
+#dash-root .rm-tbl tr.rm-sel td { background: var(--cds-chart-grid); }
+#dash-root .rm-d { font-size: .85em; margin-left: .3rem; color: var(--color-fg-muted); }
+#dash-root .rm-d.rm-good { color: var(--color-ok); } #dash-root .rm-d.rm-bad { color: var(--color-bad); }
+#dash-root .rm-chart { position: relative; min-height: 240px; }
+#dash-root .rm-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .rm-legend i { display: inline-block; width: .7rem; height: .7rem; border-radius: 2px; margin-right: .35rem; vertical-align: -1px; }
+#dash-root .rm-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+#dash-root .rm-fail { display: flex; align-items: center; justify-content: center; gap: .4rem; min-height: 4rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+#dash-root .rm-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+#dash-root [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+#dash-root .rm-link { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root details.rm-legendbox summary { cursor: pointer; font-weight: var(--cds-font-weight-medium); }
+#dash-root details.rm-legendbox li { font-size: var(--cds-font-size-caption); line-height: 1.55; max-width: 85ch; }
+#dash-root .seg { display: inline-flex; align-self: flex-start; padding: 3px; gap: 2px; background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; font-family: var(--font-anthropic-sans); }
+#dash-root .seg a, #dash-root .seg span { display: inline-flex; align-items: center; gap: .4rem; padding: var(--cds-pad-xs) var(--cds-pad-lg); border-radius: 999px; font-size: var(--cds-font-size-body); text-decoration: none; color: var(--color-fg-muted); line-height: 1.4; }
+#dash-root .seg span[aria-current] { background: var(--color-fg); color: var(--color-bg); font-weight: var(--cds-font-weight-medium); }
+#dash-root .seg a:hover { color: var(--color-fg); background: var(--cds-chart-grid); }
+#dash-root .seg a:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+
+/* фирменный цвет отчёта */
+#dash-root .rm { --tint: #2f80d1; --tint-bg: color-mix(in srgb, var(--tint) 10%, var(--color-bg)); --tint-panel: color-mix(in srgb, var(--tint) 5%, var(--color-panel)); --tint-line: color-mix(in srgb, var(--tint) 28%, var(--color-border-line));
+  background: var(--tint-bg); border-radius: calc(var(--cds-radius) * 2); padding: var(--cds-pad-xl) max(var(--cds-pad-lg), 1rem); }
+#dash-root .rm-tile, #dash-root .rm-card { background: var(--tint-panel); border-color: var(--tint-line); }
+#dash-root .rm-tbl th { background: var(--tint-panel); }
+#dash-root .rm .seg { background: var(--tint-panel); border-color: var(--tint-line); }
+#dash-root .rm .seg span[aria-current] { background: var(--tint); color: #fff; }
+#dash-root .rm [aria-pressed="true"] { background: var(--tint) !important; border-color: var(--tint) !important; color: #fff !important; }
+#dash-root .rm button { border-color: var(--tint-line); }
+#dash-root .rm-head h1 { color: color-mix(in srgb, var(--tint) 55%, var(--color-fg)); }
+
+/* режим «План / факт» */
+#dash-root .rm.pf-on #modes, #dash-root .rm.pf-on #mode-note, #dash-root .rm.pf-on #months, #dash-root .rm.pf-on #mgrs, #dash-root .rm.pf-on #takeaway,
+#dash-root .rm.pf-on #month, #dash-root .rm.pf-on #managers, #dash-root .rm.pf-on #dynamics, #dash-root .rm.pf-on #c-month, #dash-root .rm.pf-on #c-managers, #dash-root .rm.pf-on #c-dyn,
+#dash-root .rm.pf-on #qual, #dash-root .rm.pf-on #legend { display: none !important; }
+#dash-root .rm:not(.pf-on) #pf { display: none !important; }
+#dash-root .pf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--cds-gap-md); }
+#dash-root .pf-chg { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem .6rem; padding: .45rem .7rem; border-radius: var(--cds-radius); color: #fff; margin: .1rem 0 .3rem; }
+#dash-root .pf-chg.good { background: #19b45a; } #dash-root .pf-chg.bad { background: #ee4540; } #dash-root .pf-chg.flat { background: var(--color-fg-muted); }
+#dash-root .pf-arrow { font-size: 1.6rem; line-height: 1; }
+#dash-root .pf-chgv { font-size: 1.5rem; font-weight: 700; line-height: 1.1; }
+#dash-root .pf-chgc { font-size: var(--cds-font-size-caption); opacity: .95; }
+#dash-root .pf-meta { color: var(--color-fg); font-size: var(--cds-font-size-body); }
+#dash-root .pf-sub { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+#dash-root .pf-vals { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+#dash-root .pf-val { display: flex; flex-direction: column; gap: 0; }
+#dash-root .pf-val span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .pf-val b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.5rem; line-height: 1.15; }
+#dash-root .pf-hero { border: 2px solid #ee4540; border-radius: var(--cds-radius); background: var(--color-panel); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+#dash-root .pf-hero h3 { margin: 0; font-size: var(--cds-font-size-heading); }
+#dash-root .pf-hero .pf-kick { color: #ee4540; font-weight: 700; font-size: var(--cds-font-size-caption); letter-spacing: .04em; text-transform: uppercase; }
+#dash-root .pf-hero .pf-hv { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: var(--cds-gap-md); }
+#dash-root .pf-hero .pf-hv div { display: flex; flex-direction: column; }
+#dash-root .pf-hero .pf-hv span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+#dash-root .pf-hero .pf-hv b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 2rem; line-height: 1.1; }
+#dash-root .pf-chart { min-height: 170px; }
+@media (min-width: 1100px) {
+  #dash-root .pf-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .5rem; }
+  #dash-root .pf-grid .rm-card { padding: .6rem; gap: .35rem; }
+  #dash-root .pf-grid h3 { font-size: .85rem; min-height: 2.4em; line-height: 1.2; }
+  #dash-root .pf-grid .pf-chg { padding: .3rem .45rem; gap: .1rem .3rem; }
+  #dash-root .pf-grid .pf-arrow { font-size: .9rem; }
+  #dash-root .pf-grid .pf-chgv { font-size: 1.05rem; }
+  #dash-root .pf-grid .pf-chgc { font-size: .7rem; }
+  #dash-root .pf-grid .pf-vals { grid-template-columns: 1fr; gap: .2rem; }
+  #dash-root .pf-grid .pf-val { flex-direction: row; justify-content: space-between; align-items: baseline; }
+  #dash-root .pf-grid .pf-val b { font-size: 1.1rem; }
+  #dash-root .pf-grid .pf-text { font-size: .7rem; }
+}
+#dash-root .pf-hollow { background: var(--color-bg) !important; border: 2px solid var(--tint); width: .55rem !important; height: .55rem !important; border-radius: 50% !important; }
+
+/* ===== брендинг Fulfillment-Box ===== */
+#dash-root .rm { --tint:#d03040; --tint-bg:#fafafa; --tint-panel:#fff; --tint-line:#ececec; --brand:#d03040;
+  font-family:"Inter","Manrope",system-ui,-apple-system,"Segoe UI",sans-serif; background:#fafafa; border-radius:32px; padding:clamp(16px,3vw,40px); color:#111; }
+#dash-root .rm-brand { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; padding-bottom:.4rem; }
+#dash-root .rm-brand img { height:42px; width:auto; display:block; mix-blend-mode:multiply; }
+#dash-root .rm-brand .rm-tag { font-size:.8rem; color:#6b7280; border:1px solid #e5e5e5; border-radius:999px; padding:.35rem .9rem; background:#fff; }
+#dash-root .rm-head h1 { font-family:inherit; font-weight:800; font-size:clamp(1.8rem,4.2vw,3.2rem); line-height:1.05; letter-spacing:-.02em; color:#0b0b0b; }
+#dash-root .rm-head h1 span { font-weight:300; color:#6b6b6b; }
+#dash-root .rm-take { color:#555; } #dash-root .rm-take b { color:#0b0b0b; }
+#dash-root .rm-tile, #dash-root .rm-card, #dash-root .pf-hero { background:#fff; border:1px solid #ececec; border-radius:24px; box-shadow:0 10px 30px -18px rgba(0,0,0,.22); }
+#dash-root .rm-tile { padding:1rem 1.2rem; }
+#dash-root .rm-num { font-family:inherit; font-weight:800; color:var(--brand); letter-spacing:-.02em; }
+#dash-root .pf-val b { font-family:inherit; font-weight:800; letter-spacing:-.02em; }
+#dash-root .rm-sec > h2, #dash-root .rm-card h3, #dash-root .pf-hero h3 { font-weight:700; letter-spacing:-.01em; }
+#dash-root .pf-hero { border:2px solid var(--brand); }
+#dash-root .rm-pills button, #dash-root .seg { background:#fff; border:1px solid #e3e3e3; border-radius:999px; }
+#dash-root .rm-pills button { padding:.5rem 1.1rem; font-weight:500; color:#111; transition:background .15s,color .15s; }
+#dash-root .rm-pills button:hover { border-color:var(--brand); }
+#dash-root .rm [aria-pressed="true"], #dash-root .rm .seg span[aria-current] { background:var(--brand) !important; border-color:var(--brand) !important; color:#fff !important; }
+#dash-root .rm .seg { background:#fff; border-color:#e3e3e3; }
+#dash-root .rm-tbl th { background:#fff; color:#6b6b6b; font-weight:600; }
+#dash-root .rm-tbl td, #dash-root .rm-tbl th { border-bottom:1px solid #f0f0f0; }
+#dash-root .rm-tbl tr.rm-sel td { background:#fdf0f1; }
+#dash-root .pf-chg { border-radius:16px; }
+
+#dash-root .pf-hero .pf-hv { grid-template-columns: repeat(4, minmax(0,1fr)); align-items: stretch; }
+#dash-root .pf-hero .pf-hv div { justify-content: space-between; gap: .35rem; }
+#dash-root .pf-hero .pf-hv span { line-height: 1.25; min-height: 2.5em; }
+#dash-root .pf-hero .pf-hv b { font-family: inherit; font-weight: 800; font-size: clamp(1.6rem, 3vw, 2.4rem); letter-spacing: -.02em; line-height: 1; white-space: nowrap; }
+#dash-root .pf-hero .pf-kick { color: var(--brand); }
+@media (max-width: 560px) { #dash-root .pf-hero .pf-hv { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+
+/* выравнивание чисел в таблицах: число и изменение в отдельных «колонках» */
+#dash-root .rm-tbl td.rm-n { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+#dash-root .rm-tbl td.rm-n .rm-d { display: inline-block; min-width: 3.4em; text-align: right; margin-left: .4rem; }
+#dash-root .rm-tbl td.rm-n:not(:has(.rm-d))::after { content: ""; display: inline-block; min-width: 3.4em; margin-left: .4rem; }
+#dash-root .rm-tbl th.rm-n { text-align: right; }
+#dash-root .rm-tbl td:first-child { white-space: nowrap; }
+
+/* плитки: подписи в две строки, цифры на одном уровне */
+#dash-root .rm-tile > .rm-lbl { min-height: 2.5em; line-height: 1.25; display: flex; align-items: flex-start; }
+#dash-root .rm-tile > .rm-num { line-height: 1; }
+#dash-root .rm-tile > .rm-sub { line-height: 1.3; }
+</style>
+
+<div class="rm">
+  <header class="rm-head" id="top">
+    <div class="rm-brand"><img alt="Fulfillment-Box" src="data:image/png;base64,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"><span class="rm-tag">Отдел продаж</span></div>
+    <nav class="seg" aria-label="Отчёт"><a href="https://claude.ai/artifact/NoG7PGVVzZTBpeKUdtLWSA" target="_blank" rel="noopener">Ежедневный</a><span aria-current="page">Ежемесячный</span></nav>
+    <div class="rm-pills" id="views" role="group" aria-label="Режим отчёта">
+      <button type="button" data-view="fact" aria-pressed="true">Факт</button>
+      <button type="button" data-view="plan" aria-pressed="false">План / факт</button>
+    </div>
+    <div>
+      <h1>SALES DEPARTMENT <span>по месяцам</span></h1>
+      <p class="rm-take" id="takeaway"><span class="dash-skeleton">—</span></p>
+    </div>
+    <div class="rm-pills" id="modes" role="group" aria-label="Как считать">
+      <button type="button" data-mode="events" aria-pressed="true">События месяца</button>
+      <button type="button" data-mode="cohort" aria-pressed="false">Лиды месяца (когорта)</button>
+    </div>
+    <p class="rm-note" id="mode-note"></p>
+    <div class="rm-pills" id="months" role="group" aria-label="Месяц" data-source="month_all"></div>
+    <div class="rm-pills" id="mgrs" role="group" aria-label="Менеджер" data-source="month_all"></div>
+  </header>
+
+  <section class="rm-sec" id="month">
+    <h2 id="month-title">Месяц</h2>
+    <p>Рядом с каждой цифрой — изменение к предыдущему месяцу. «Зашло в воронку» — по дате, когда сделка появилась в «FF-Box главная» (новая или перенесённая из другой воронки). Конверсия = подключено к YSELL / (живая воронка на начало месяца + зашло за месяц).</p>
+    <div class="rm-tiles">
+      <div class="rm-tile"><span class="rm-lbl">Зашло в воронку</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Новых лидов">—</span><span class="rm-sub">из них созданы раньше (перенос) — <span data-source="month_all" data-field="Из них созданы раньше">—</span></span><span class="rm-sub" data-source="month_all" data-field="Δ Новых лидов">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Подключено к YSELL</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Подключено к YSELL">—</span><span class="rm-sub" data-source="month_all" data-field="Δ Подключено к YSELL">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Конверсия в YSELL</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Конверсия">—</span><span class="rm-sub" data-source="month_all" data-field="Δ Конверсия">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Ушло в отказ / перестал отвечать</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Отказ / перестал отвечать">—</span><span class="rm-sub" data-source="month_all" data-field="Δ Отказ / перестал отвечать">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Касаний клиентов</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Касаний">—</span><span class="rm-sub" data-source="month_all" data-field="Δ Касаний">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Первая реакция, мин (медиана)</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Реакция, мин">—</span><span class="rm-sub" data-source="month_all" data-field="Δ Реакция, мин">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Живая воронка на конец</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Живая на конец">—</span><span class="rm-sub" data-source="month_all" data-field="Δ Живая на конец">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Зависшие на конец (&gt; 7 дн.)</span><span class="rm-num dash-skeleton" data-source="month_all" data-field="Зависшие на конец">—</span><span class="rm-sub" data-source="month_all" data-field="Δ Зависшие на конец">—</span></div>
+    </div>
+  </section>
+
+  <section class="rm-sec" id="managers">
+    <h2 id="mgr-title">Менеджеры за месяц</h2>
+    <p>Сделка засчитывается менеджеру, который ведёт её сейчас. Квалификатор Юлия Мартынова в «Вся команда» не входит — её показатели ниже.</p>
+    <div class="rm-card"><div class="rm-tbl"><table data-source="month_all" data-row-key="Месяц,Менеджер"><thead><tr>
+      <th data-field="Менеджер">Менеджер</th><th class="rm-n" data-field="Новых лидов">Зашло</th><th class="rm-n" data-field="Подключено к YSELL">YSELL</th><th class="rm-n" data-field="Конверсия">Конверсия</th><th class="rm-n" data-field="В горячие">В горячие</th><th class="rm-n" data-field="Отказ / перестал отвечать">Отказ / перестал</th><th class="rm-n" data-field="Касаний">Касаний</th><th class="rm-n" data-field="Реакция, мин">Реакция, мин</th><th class="rm-n" data-field="Живая на конец">Живая на конец</th><th class="rm-n" data-field="Зависшие на конец">Зависшие</th>
+    </tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+  <section class="rm-sec" id="dynamics">
+    <h2 id="dyn-title">Динамика по месяцам</h2>
+    <div class="rm-card">
+      <div class="rm-legend" id="bars-legend"></div>
+      <div class="rm-chart" id="bars" data-source="month_all"></div>
+    </div>
+    <div class="rm-card"><div class="rm-tbl"><table data-source="month_all" data-row-key="Месяц,Менеджер" id="by-month"><thead><tr>
+      <th data-field="Месяц">Месяц</th><th class="rm-n" data-field="Новых лидов">Зашло</th><th class="rm-n" data-field="Из них созданы раньше">из них перенос</th><th class="rm-n" data-field="Подключено к YSELL">YSELL</th><th class="rm-n" data-field="Конверсия">Конверсия</th><th class="rm-n" data-field="Отказ / перестал отвечать">Отказ / перестал</th><th class="rm-n" data-field="Мусор">Мусор</th><th class="rm-n" data-field="Касаний">Касаний</th><th class="rm-n" data-field="Реакция, мин">Реакция, мин</th><th class="rm-n" data-field="Живая на конец">Живая на конец</th><th class="rm-n" data-field="Зависшие на конец">Зависшие</th><th class="rm-n" data-field="Перестал отвечать на конец">«Перестал отвечать»</th>
+    </tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+
+  <section class="rm-sec" id="c-month" hidden>
+    <h2 id="c-title">Лиды месяца</h2>
+    <p>Все цифры — про одни и те же лиды, созданные в этом месяце: что с ними стало на сегодня. Сумма «подключены + в отказе + в мусоре + в работе + действующие» = новых лидов. Рядом — изменение к лидам прошлого месяца.</p>
+    <div class="rm-tiles">
+      <div class="rm-tile"><span class="rm-lbl">Пришло лидов</span><span class="rm-num dash-skeleton" data-source="cohort_all" data-field="Пришло">—</span><span class="rm-sub" data-source="cohort_all" data-field="Δ Пришло">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Дошли до YSELL</span><span class="rm-num dash-skeleton" data-source="cohort_all" data-field="Дошли до YSELL">—</span><span class="rm-sub" data-source="cohort_all" data-field="Δ Дошли до YSELL">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Конверсия лидов в YSELL</span><span class="rm-num dash-skeleton" data-source="cohort_all" data-field="Конверсия">—</span><span class="rm-sub" data-source="cohort_all" data-field="Δ Конверсия">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Сейчас в отказе / перестал отвечать</span><span class="rm-num dash-skeleton" data-source="cohort_all" data-field="В отказе">—</span><span class="rm-sub" data-source="cohort_all" data-field="Δ В отказе">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Сейчас в мусоре</span><span class="rm-num dash-skeleton" data-source="cohort_all" data-field="В мусоре">—</span><span class="rm-sub" data-source="cohort_all" data-field="Δ В мусоре">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Ещё в работе</span><span class="rm-num dash-skeleton" data-source="cohort_all" data-field="В работе">—</span><span class="rm-sub" data-source="cohort_all" data-field="Δ В работе">—</span></div>
+      <div class="rm-tile"><span class="rm-lbl">Дней до YSELL (медиана)</span><span class="rm-num dash-skeleton" data-source="cohort_all" data-field="Дней до YSELL">—</span><span class="rm-sub" data-source="cohort_all" data-field="Δ Дней до YSELL">—</span></div>
+    </div>
+  </section>
+
+  <section class="rm-sec" id="c-managers" hidden>
+    <h2 id="c-mgr-title">Лиды месяца по менеджерам</h2>
+    <p>По текущему ответственному. Доли — от числа пришедших лидов менеджера.</p>
+    <div class="rm-card"><div class="rm-tbl"><table data-source="cohort_all" data-row-key="Месяц,Менеджер" id="c-mgr-table"><thead><tr>
+      <th data-field="Менеджер">Менеджер</th><th class="rm-n" data-field="Пришло">Пришло</th><th class="rm-n" data-field="Дошли до YSELL">YSELL</th><th class="rm-n" data-field="Конверсия">Конверсия</th><th class="rm-n" data-field="В отказе">В отказе</th><th class="rm-n" data-field="В мусоре">В мусоре</th><th class="rm-n" data-field="В работе">В работе</th><th class="rm-n" data-field="Дней до YSELL">Дней до YSELL</th>
+    </tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+  <section class="rm-sec" id="c-dyn" hidden>
+    <h2 id="c-dyn-title">Лиды по месяцам поступления</h2>
+    <p>У свежих месяцев конверсия всегда ниже: их лиды ещё в работе.</p>
+    <div class="rm-card">
+      <div class="rm-legend" id="c-bars-legend"></div>
+      <div class="rm-chart" id="c-bars" data-source="cohort_all"></div>
+    </div>
+    <div class="rm-card"><div class="rm-tbl"><table data-source="cohort_all" data-row-key="Месяц,Менеджер" id="c-by-month"><thead><tr>
+      <th data-field="Месяц">Месяц поступления</th><th class="rm-n" data-field="Пришло">Пришло</th><th class="rm-n" data-field="Дошли до YSELL">YSELL</th><th class="rm-n" data-field="Конверсия">Конверсия</th><th class="rm-n" data-field="В отказе">В отказе</th><th class="rm-n" data-field="В мусоре">В мусоре</th><th class="rm-n" data-field="В работе">В работе</th><th class="rm-n" data-field="Действующие">Действующие</th><th class="rm-n" data-field="Дней до YSELL">Дней до YSELL</th>
+    </tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+  <section class="rm-sec" id="pf">
+    <h2>План / факт — Q4 2026</h2>
+    <p class="rm-take" id="pf-take"><span class="dash-skeleton">—</span></p>
+    <div class="pf-hero" id="pf-hero" hidden></div>
+    <p>Цели из плана для РОПа на ноябрь и декабрь (предварительные, меняются в таблице «Отчет воронка FFB», вкладка «План KPI», жёлтые ячейки; там же видно, как считается каждый факт). «Старт» — сентябрь для показателей по месяцу прихода лида и 15.10 для двух снимков живой воронки. «Сейчас» — последний месяц с данными, он ещё идёт, поэтому лиды месяца не успели созреть.</p>
+    <div class="rm-pills" id="pf-cmpbar"><label for="pf-cmp" class="rm-sub">Сравнить с датой:</label> <select id="pf-cmp"></select> <span class="rm-sub" id="pf-cmp-note"></span></div>
+    <div class="rm-card"><div class="rm-tbl"><table data-source="pf" data-row-key="Показатель" id="pf-table"><thead><tr>
+      <th data-field="Показатель">Показатель</th><th class="rm-n" data-field="Старт">Старт</th><th class="rm-n" data-field="Сейчас">Сейчас</th><th class="rm-n" data-field="План ноябрь">План ноябрь</th><th class="rm-n" data-field="Факт ноябрь">Факт ноябрь</th><th class="rm-n" data-field="План декабрь">План декабрь</th><th class="rm-n" data-field="Факт декабрь">Факт декабрь</th><th class="rm-n" id="pf-cmp-h">Было</th><th class="rm-n">Изменение</th>
+    </tr></thead><tbody></tbody></table></div></div>
+    <div class="rm-legend" id="pf-legend"></div>
+    <div class="pf-grid">
+      <div class="rm-card"><h3 id="pf-t0"></h3><p class="rm-note" id="pf-n0"></p><div class="rm-chart pf-chart" id="pf-c0" data-source="plan"></div></div>
+      <div class="rm-card"><h3 id="pf-t1"></h3><p class="rm-note" id="pf-n1"></p><div class="rm-chart pf-chart" id="pf-c1" data-source="plan"></div></div>
+      <div class="rm-card"><h3 id="pf-t2"></h3><p class="rm-note" id="pf-n2"></p><div class="rm-chart pf-chart" id="pf-c2" data-source="plan"></div></div>
+      <div class="rm-card"><h3 id="pf-t3"></h3><p class="rm-note" id="pf-n3"></p><div class="rm-chart pf-chart" id="pf-c3" data-source="plan"></div></div>
+      <div class="rm-card"><h3 id="pf-t4"></h3><p class="rm-note" id="pf-n4"></p><div class="rm-chart pf-chart" id="pf-c4" data-source="plan"></div></div>
+      <div class="rm-card"><h3 id="pf-t5"></h3><p class="rm-note" id="pf-n5"></p><div class="rm-chart pf-chart" id="pf-c5" data-source="plan"></div></div>
+    </div>
+    <p class="rm-note">Точечный тренд построен по полным месяцам, текущий месяц в него не входит. Два последних показателя — снимки на сегодня, их история копится ежедневно в листе «План — история»; стрелка показывает изменение за 7 дней.</p>
+  </section>
+
+  <section class="rm-sec" id="qual">
+    <h2>Квалификация — Юлия Мартынова</h2>
+    <p>По всем лидам месяца: время от поступления в воронку до ухода со стадий «Новые»/«Квалификация», доля квалифицированных за 60 минут и быстрее, сколько сделок отсеяно в мусор.</p>
+    <div class="rm-card"><div class="rm-tbl"><table data-source="month_all" data-row-key="Месяц,Менеджер" id="qual-table"><thead><tr>
+      <th data-field="Месяц">Месяц</th><th class="rm-n" data-field="Новых лидов">Новых лидов</th><th class="rm-n" data-field="Квалификация, мин">Квалификация, мин (медиана)</th><th class="rm-n" data-field="За 60 мин">За 60 мин</th><th class="rm-n" data-field="Мусор">Отсеяно в мусор</th>
+    </tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+  <section class="rm-sec" id="legend">
+    <details class="rm-legendbox rm-card">
+      <summary>Как считаем</summary>
+      <ul>
+        <li>Источник — листы «История стадий», «Сделки — детали» и «Активности» таблицы «Отчет воронка FFB». Их каждое утро между 8 и 9 обновляет скрипт <code>syncActivityAndQualification</code> из Битрикса.</li>
+        <li><b>Август неполный:</b> воронка «FF-Box главная» ведётся с 11.08, сделки тогда переносили из других воронок. Перенос на стадию не считается переходом: подключением, отказом и т. п. считается только смена стадии внутри воронки.</li>
+        <li><b>Два способа считать.</b> «События месяца» — что произошло в воронке за месяц со всеми сделками, когда бы они ни пришли (работа команды за месяц). «Лиды месяца (когорта)» — только сделки, созданные в этом месяце, и где они сейчас: дошли до YSELL (когда-либо), в отказе/«перестал отвечать», в мусоре, ещё в работе, действующие клиенты. Конверсия когорты = дошли до YSELL / пришло. Дней до YSELL — от создания до первого перехода на YSELL, медиана.</li>
+        <li><b>Зашло в воронку</b> (режим «События месяца») — сделки, которые в этом месяце впервые появились в «FF-Box главная»: новые и перенесённые из других воронок; «из них перенос» — созданные в Битриксе раньше этого месяца. В режиме «Лиды месяца» лиды берутся по дате создания сделки, чтобы перенесённые старые сделки не искажали конверсию.</li>
+        <li><b>Подключено к YSELL / в горячие</b> — первый переход сделки на «Подключение к YSELL» («Сделка успешна») / на «Готов стать клиентом», «Подписание договора», «Оплата депозита» в этом месяце. <b>Отказ / перестал отвечать</b>, <b>мусор</b> — переход в эти стадии из других в этом месяце.</li>
+        <li><b>Живая на начало / на конец</b> — сделки на рабочих стадиях (не отказ, не мусор, не YSELL, не обращения действующих) в первую / последнюю минуту месяца. <b>Зависшие</b> — живые, которые к концу месяца больше 7 дней не меняли стадию.</li>
+        <li><b>Касание</b> — исходящий звонок, письмо, сообщение или встреча в Битриксе. <b>Реакция</b> — минуты от поступления нового лида в воронку до первого касания, медиана по лидам месяца.</li>
+        <li>Сделка засчитывается её текущему ответственному. Юлия Перелет и Assistant Assistant исключены. Юлия Мартынова — квалификатор, в «Вся команда» не входит.</li>
+      </ul>
+    </details>
+  </section>
+</div>
+
+<script>
+window.RM = {
+  fmt: d3.format(','), pct: d3.format('.0%'),
+  MONTHS: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+  label: (m) => { const [y, mo] = m.split('-'); return RM.MONTHS[+mo - 1] + ' ' + y; },
+  month: () => dash.params().month || null,
+  mgr: () => dash.params().mgr || 'Все',
+};
+
+window.RM_tableLoader = {
+  description: 'Лист как таблица: первая строка — названия колонок; числовые колонки — числами.',
+  fn: ({ answer }) => {
+    const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+    if (a && a.error) throw new Error(a.error.message || String(a.error));
+    const v = (a && a.values) || [];
+    if (!v.length) throw new Error('Лист пустой — скрипт выгрузки ещё не отработал');
+    const head = v[0];
+    const NUM = new Set(['Минут на квалификации', 'Минут до первого касания', 'Касаний с 01.09', 'Открытых дел', 'Просрочено дел']);
+    const rows = v.slice(1).filter((r) => r && r[0]).map((r) => { const o = {}; head.forEach((c, j) => { const x = r[j] ?? ''; o[c] = NUM.has(c) ? (x === '' ? null : Number(x)) : String(x); }); return o; });
+    return { data: rows, columns: head };
+  },
+};
+dash.loader('hist', window.RM_tableLoader);
+dash.loader('deals_detail', window.RM_tableLoader);
+dash.loader('acts', window.RM_tableLoader);
+dash.loader('hist_kpi', {
+  description: 'Вкладка «План — история»: по каждой дате значения шести показателей (до 16.10 восстановлены по истории стадий, дальше — ежедневные снимки).',
+  fn: ({ answer }) => {
+    const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+    if (a && a.error) throw new Error(a.error.message || String(a.error));
+    const v = (a && a.values) || [];
+    if (v.length < 2) throw new Error('Вкладка «План — история» пустая');
+    const num = (x) => {
+      if (x == null) return null;
+      let s = String(x).replace(/[\s ]/g, '');
+      if (s === '' || s[0] === '#') return null;
+      const p = s.endsWith('%'); if (p) s = s.slice(0, -1);
+      const n = Number(s.replace(',', '.'));
+      return isNaN(n) ? null : (p ? n / 100 : n);
+    };
+    const rows = v.slice(1).filter((r) => r && /^\d{4}-\d{2}-\d{2}$/.test(String(r[0] || '').trim())).map((r) => ({ 'Дата': String(r[0]).trim(), 'Месяц': r[1], 'Лидов': num(r[2]), 'Конверсия': num(r[3]), 'Молчуны': num(r[4]), 'Касание': num(r[5]), 'Без касания': num(r[6]), 'Живые без дела': num(r[7]), 'Горячие зависшие': num(r[8]), 'Источник': r[9] || '' }));
+    rows.sort((x, y) => (x['Дата'] < y['Дата'] ? -1 : 1));
+    return { data: rows, columns: ['Дата', 'Месяц', 'Лидов', 'Конверсия', 'Молчуны', 'Касание', 'Без касания', 'Живые без дела', 'Горячие зависшие', 'Источник'] };
+  },
+});
+dash.loader('plan', {
+  description: 'Вкладка «План KPI»: плана и факт по месяцам. Берём из неё ключи месяцев, цели (жёлтые ячейки) и расчётные факты, превращаем в длинную таблицу Показатель × Месяц.',
+  fn: ({ answer }) => {
+    const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+    if (a && a.error) throw new Error(a.error.message || String(a.error));
+    const v = (a && a.values) || [];
+    if (v.length < 8) throw new Error('Вкладка «План KPI» пустая или изменена');
+    const num = (x) => {
+      if (x == null) return null;
+      let s = String(x).replace(/[\s ]/g, '');
+      if (s === '' || s[0] === '#') return null;
+      const p = s.endsWith('%'); if (p) s = s.slice(0, -1);
+      const n = Number(s.replace(',', '.'));
+      return isNaN(n) ? null : (p ? n / 100 : n);
+    };
+    const keys = v[0], head = v[1];
+    const out = [];
+    v.slice(2, 8).forEach((r) => {
+      const byM = {};
+      for (let j = 3; j < 10; j++) {
+        const m = String(keys[j] || '').trim(); if (!m) continue;
+        const o = (byM[m] = byM[m] || { 'Показатель': r[0], 'Месяц': m, 'Факт': null, 'План': null, 'Старт': num(r[2]) });
+        if (/план/i.test(head[j] || '')) o['План'] = num(r[j]); else o['Факт'] = num(r[j]);
+      }
+      Object.values(byM).forEach((o) => out.push(o));
+    });
+    return { data: out, columns: ['Показатель', 'Месяц', 'Факт', 'План', 'Старт'] };
+  },
+});
+
+dash.calc('mstats', {
+  inputs: ['hist', 'deals_detail'],
+  title: 'Воронка по месяцам',
+  description: 'По месяцам с августа 2026, по текущему ответственному и всего («Все»; без Юлии Перелет и Assistant Assistant; Юлия Мартынова в «Все» не входит): зашло в воронку (по первой записи в истории стадий) и из них созданных раньше этого месяца, переходы в YSELL, в горячие, в отказ/«перестал отвечать», в мусор (только смена стадии внутри воронки, не перенос), живая воронка на начало и конец месяца, зависшие (> 7 дней без смены стадии) и «перестал отвечать» на конец.',
+  fn: (hist, deals_detail) => {
+    const G = (s) => ['Подключение к YSELL', 'Сделка успешна'].includes(s) ? 'success' : ['Отказ клиента', 'Отказ перп центра', 'Клиент перестал отвечать', 'Сделка провалена', 'Анализ причины провала'].includes(s) ? 'lost' : ['Нецелевой лид', 'СПАМ', 'Прочее'].includes(s) ? 'junk' : s === 'Обращение действующего' ? 'client' : 'live';
+    const HOT = ['Готов стать клиентом', 'Подписание договора', 'Оплата депозита'];
+    const ms = (s) => new Date(s.replace(' ', 'T') + ':00+03:00').getTime();
+    const dm = {}; deals_detail.forEach((d) => { dm[d['ID сделки']] = d; });
+    const ev = {}; hist.forEach((h) => { if (dm[h['ID сделки']]) (ev[h['ID сделки']] = ev[h['ID сделки']] || []).push(h); });
+    Object.values(ev).forEach((a) => a.sort((x, y) => (x['Время'] < y['Время'] ? -1 : 1)));
+    const last = hist.reduce((m, h) => (h['Время'] > m ? h['Время'] : m), '2026-08-01');
+    const months = []; for (let y = 2026, mo = 8; `${y}-${String(mo).padStart(2, '0')}` <= last.slice(0, 7); mo === 12 ? (y++, mo = 1) : mo++) months.push(`${y}-${String(mo).padStart(2, '0')}`);
+    const next = (m) => { const [y, mo] = m.split('-').map(Number); return mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`; };
+    const out = {};
+    const get = (m, n) => (out[m + '|' + n] = out[m + '|' + n] || { 'Месяц': m, 'Менеджер': n, 'Новых лидов': 0, 'Из них созданы раньше': 0, 'Подключено к YSELL': 0, 'В горячие': 0, 'Отказ / перестал отвечать': 0, 'Мусор': 0, 'Живая на начало': 0, 'Живая на конец': 0, 'Зависшие на конец': 0, 'Перестал отвечать на конец': 0 });
+    Object.keys(dm).forEach((id) => {
+      const d = dm[id], n = d['Менеджер'];
+      if (['Юлия Перелет', 'Assistant Assistant'].includes(n)) return;
+      const e = ev[id] || [];
+      const names = n === 'Юлия Мартынова' ? [n] : [n, 'Все'];
+      const firstSuccess = e.findIndex((x, i) => i > 0 && G(x['Стадия']) === 'success');
+      const firstHot = e.findIndex((x, i) => i > 0 && HOT.includes(x['Стадия']));
+      months.forEach((m) => {
+        const S = m + '-01 00:00', E = next(m) + '-01 00:00';
+        const at = (t) => { let c = null; for (const x of e) { if (x['Время'] < t) c = x; else break; } return c; };
+        const a = at(S), b = at(E);
+        const inM = (x) => x && x['Время'] >= S && x['Время'] < E;
+        names.forEach((nm) => {
+          const o = get(m, nm);
+          const entered = e.length ? e[0]['Время'] : d['Поступила'];
+          if (entered && entered >= S && entered < E) { o['Новых лидов']++; if (d['Создана'] && d['Создана'] < S) o['Из них созданы раньше']++; }
+          if (firstSuccess >= 0 && inM(e[firstSuccess])) o['Подключено к YSELL']++;
+          if (firstHot >= 0 && inM(e[firstHot])) o['В горячие']++;
+          if (e.some((x, i) => i > 0 && inM(x) && G(x['Стадия']) === 'lost' && G(e[i - 1]['Стадия']) !== 'lost')) o['Отказ / перестал отвечать']++;
+          if (e.some((x, i) => i > 0 && inM(x) && G(x['Стадия']) === 'junk' && G(e[i - 1]['Стадия']) !== 'junk')) o['Мусор']++;
+          if (a && G(a['Стадия']) === 'live') o['Живая на начало']++;
+          if (b && G(b['Стадия']) === 'live') { o['Живая на конец']++; if (ms(E) - ms(b['Время']) > 7 * 864e5) o['Зависшие на конец']++; }
+          if (b && b['Стадия'] === 'Клиент перестал отвечать') o['Перестал отвечать на конец']++;
+        });
+      });
+    });
+    return Object.values(out).map((o) => { const base = o['Живая на начало'] + o['Новых лидов']; return { ...o, 'Конверсия': base ? o['Подключено к YSELL'] / base : 0 }; });
+  },
+});
+
+dash.calc('mact', {
+  inputs: ['acts', 'deals_detail'],
+  title: 'Активность и скорость по месяцам',
+  description: 'По месяцам и ответственному (и «Все» без Юлии Мартыновой; без Юлии Перелет и Assistant Assistant): касания (исходящие звонки, письма, сообщения, встречи в Битриксе) по дате создания; по лидам, созданным в месяце, — медиана минут до первого касания, медиана минут на квалификации и доля квалифицированных за 60 минут.',
+  fn: (acts, deals_detail) => {
+    const med = (xs) => { const s = xs.filter((x) => x != null).sort((p, q) => p - q); if (!s.length) return null; const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : Math.round((s[m - 1] + s[m]) / 2); };
+    const out = {};
+    const get = (m, n) => (out[m + '|' + n] = out[m + '|' + n] || { 'Месяц': m, 'Менеджер': n, 'Касаний': 0, _r: [], _q: [] });
+    acts.filter((r) => r['Касание'] === 'да' && r['Создано'] >= '2026-08' && !['Юлия Перелет', 'Assistant Assistant'].includes(r['Ответственный'])).forEach((r) => {
+      const m = r['Создано'].slice(0, 7); get(m, r['Ответственный'])['Касаний']++; if (r['Ответственный'] !== 'Юлия Мартынова') get(m, 'Все')['Касаний']++;
+    });
+    deals_detail.filter((d) => d['Создана'] >= '2026-08' && !['Юлия Перелет', 'Assistant Assistant'].includes(d['Менеджер'])).forEach((d) => {
+      const m = d['Создана'].slice(0, 7);
+      [d['Менеджер'], ...(d['Менеджер'] !== 'Юлия Мартынова' ? ['Все'] : [])].forEach((n) => {
+        const o = get(m, n); o._r.push(d['Минут до первого касания']);
+        if (d['Через квалификацию'] === 'да' && d['Ушла с квалификации']) o._q.push(d['Минут на квалификации']);
+      });
+    });
+    return Object.values(out).map((o) => ({ 'Месяц': o['Месяц'], 'Менеджер': o['Менеджер'], 'Касаний': o['Касаний'], 'Реакция, мин': med(o._r), 'Квалификация, мин': med(o._q), 'За 60 мин': o._q.length ? o._q.filter((x) => x <= 60).length / o._q.length : null }));
+  },
+});
+
+dash.calc('month_all', {
+  inputs: ['mstats', 'mact'],
+  title: 'Итоги месяца',
+  description: 'Воронка и активность по месяцу и менеджеру вместе, плюс изменение каждой цифры к предыдущему месяцу (Δ).',
+  fn: (mstats, mact) => {
+    const key = (r) => r['Месяц'] + '|' + r['Менеджер'];
+    const am = {}; mact.forEach((r) => { am[key(r)] = r; });
+    const rows = mstats.map((r) => ({ ...r, 'Касаний': (am[key(r)] || {})['Касаний'] || 0, 'Реакция, мин': (am[key(r)] || {})['Реакция, мин'] ?? null, 'Квалификация, мин': (am[key(r)] || {})['Квалификация, мин'] ?? null, 'За 60 мин': (am[key(r)] || {})['За 60 мин'] ?? null }));
+    const by = {}; rows.forEach((r) => { by[key(r)] = r; });
+    const prev = (m) => { const [y, mo] = m.split('-').map(Number); return mo === 1 ? `${y - 1}-12` : `${y}-${String(mo - 1).padStart(2, '0')}`; };
+    const F = ['Новых лидов', 'Подключено к YSELL', 'Конверсия', 'Отказ / перестал отвечать', 'Касаний', 'Реакция, мин', 'Живая на конец', 'Зависшие на конец'];
+    return rows.map((r) => { const p = by[prev(r['Месяц']) + '|' + r['Менеджер']]; const o = { ...r }; F.forEach((f) => { o['Δ ' + f] = p && r[f] != null && p[f] != null ? r[f] - p[f] : null; }); return o; })
+      .sort((a, b) => (a['Месяц'] < b['Месяц'] ? -1 : a['Месяц'] > b['Месяц'] ? 1 : a['Менеджер'] === 'Все' ? -1 : b['Менеджер'] === 'Все' ? 1 : b['Подключено к YSELL'] - a['Подключено к YSELL']));
+  },
+});
+</script>
+
+<script>
+(() => {
+  const monthsEl = document.getElementById('months'), mgrsEl = document.getElementById('mgrs');
+  let init = false;
+  monthsEl.addEventListener('click', (e) => { const b = e.target.closest('button[data-m]'); if (b) dash.setParams({ month: b.dataset.m }); });
+  mgrsEl.addEventListener('click', (e) => { const b = e.target.closest('button[data-n]'); if (b) dash.setParams({ mgr: b.dataset.n === 'Все' ? null : b.dataset.n }); });
+  const td = (t, c) => { const e = document.createElement('td'); e.textContent = t; if (c) e.className = c; return e; };
+  const fmtF = (f, v) => (v == null ? '—' : f === 'Конверсия' || f === 'За 60 мин' ? RM.pct(v) : RM.fmt(v));
+  const GOOD_UP = new Set(['Новых лидов', 'Подключено к YSELL', 'Конверсия', 'Касаний', 'В горячие']);
+  const BAD_UP = new Set(['Отказ / перестал отвечать', 'Реакция, мин', 'Зависшие на конец']);
+  const deltaTxt = (f, d) => { if (d == null) return ''; const s = d > 0 ? '+' : d < 0 ? '−' : '±'; const a = Math.abs(d); return s + (f === 'Конверсия' ? Math.round(a * 100) + ' п.п.' : RM.fmt(Math.round(a * 10) / 10)); };
+  const deltaCls = (f, d) => (d == null || d === 0 ? '' : GOOD_UP.has(f) ? (d > 0 ? 'rm-good' : 'rm-bad') : BAD_UP.has(f) ? (d > 0 ? 'rm-bad' : 'rm-good') : '');
+  const cellWithDelta = (r, f) => { const e = td(fmtF(f, r[f]), 'rm-n'); if (r['Δ ' + f] != null) { const s = document.createElement('span'); s.className = 'rm-d ' + deltaCls(f, r['Δ ' + f]); s.textContent = deltaTxt(f, r['Δ ' + f]); e.append(s); } return e; };
+  function fill(tbl, rows, cols, keyOf, selCls) {
+    const tb = tbl.querySelector('tbody'); tb.replaceChildren(); const box = tbl.parentElement; box.querySelector('.rm-fail')?.remove();
+    rows.forEach((r) => { const tr = document.createElement('tr'); cols.forEach((c) => tr.append(c(r))); tr.dataset.key = keyOf(r); if (selCls && selCls(r)) tr.classList.add('rm-sel'); tb.append(tr); });
+  }
+  const enc = (s) => encodeURIComponent(s);
+
+  dash.onData(() => {
+    const d = dash.data('month_all');
+    const err = d.status === 'error' || ['mstats', 'mact'].some((x) => dash.data(x).status === 'error');
+    document.querySelectorAll('.rm-tbl').forEach((b) => { b.querySelector('.rm-fail')?.remove(); if (err) { const f = document.createElement('div'); f.className = 'rm-fail'; f.textContent = 'Failed to load'; b.append(f); } });
+    if (d.status !== 'ok' || !d.data.length) { if (err) document.getElementById('takeaway').textContent = 'Данные не загрузились — возможно, скрипт ещё не создал лист «История стадий». Подробности в «Источниках».'; return; }
+    const rows = d.data;
+    const months = [...new Set(rows.map((r) => r['Месяц']))].sort();
+    const curMonth = months[months.length - 1];
+    if (!init) { init = true; if (!RM.month()) { const full = months.length > 1 ? months[months.length - 2] : curMonth; dash.setParams({ month: full }); return; } }
+    const M = RM.month() && months.includes(RM.month()) ? RM.month() : curMonth;
+    const N = RM.mgr();
+    monthsEl.replaceChildren(...months.map((m) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.m = m; b.textContent = RM.label(m) + (m === '2026-08' ? ' · с 11.08' : m === curMonth ? ' · идёт' : ''); b.setAttribute('aria-pressed', String(m === M)); return b; }));
+    const names = [...new Set(rows.map((r) => r['Менеджер']))].sort((a, b) => (a === 'Все' ? -1 : b === 'Все' ? 1 : a.localeCompare(b, 'ru')));
+    mgrsEl.replaceChildren(...names.map((n) => { const b = document.createElement('button'); b.type = 'button'; b.dataset.n = n; b.textContent = n === 'Все' ? 'Вся команда' : n === 'Юлия Мартынова' ? n + ' · квалификатор' : n; b.setAttribute('aria-pressed', String(n === N)); return b; }));
+    const who = N === 'Все' ? 'вся команда' : N;
+    document.getElementById('month-title').textContent = RM.label(M) + ' — ' + who;
+    document.getElementById('mgr-title').textContent = 'Менеджеры — ' + RM.label(M);
+    document.getElementById('dyn-title').textContent = 'Динамика по месяцам — ' + who;
+
+    const row = rows.find((r) => r['Месяц'] === M && r['Менеджер'] === N);
+    document.querySelectorAll('#month [data-source="month_all"][data-field]').forEach((el) => {
+      el.setAttribute('data-where', 'Месяц=' + enc(M) + '&Менеджер=' + enc(N));
+      const f = el.getAttribute('data-field');
+      el.classList.remove('dash-skeleton', 'rm-good', 'rm-bad');
+      if (!row) { el.textContent = '—'; return; }
+      if (f.startsWith('Δ ')) { const base = f.slice(2); const v = row[f]; el.textContent = v == null ? 'нет данных за прошлый месяц' : deltaTxt(base, v) + ' к прошлому месяцу'; const c = deltaCls(base, v); if (c) el.classList.add(c); }
+      else el.textContent = fmtF(f, row[f]);
+    });
+
+    const cols = ['Новых лидов', 'Подключено к YSELL', 'Конверсия', 'В горячие', 'Отказ / перестал отвечать', 'Касаний', 'Реакция, мин', 'Живая на конец', 'Зависшие на конец'];
+    fill(document.querySelector('#managers table'), rows.filter((r) => r['Месяц'] === M && r['Менеджер'] !== 'Юлия Мартынова'),
+      [(r) => td(r['Менеджер'] === 'Все' ? 'Вся команда' : r['Менеджер']), ...cols.map((f) => (r) => cellWithDelta(r, f))],
+      (r) => enc(r['Месяц']) + ',' + enc(r['Менеджер']), (r) => r['Менеджер'] === N && N !== 'Все');
+
+    const cols2 = ['Новых лидов', 'Из них созданы раньше', 'Подключено к YSELL', 'Конверсия', 'Отказ / перестал отвечать', 'Мусор', 'Касаний', 'Реакция, мин', 'Живая на конец', 'Зависшие на конец', 'Перестал отвечать на конец'];
+    fill(document.getElementById('by-month'), rows.filter((r) => r['Менеджер'] === N),
+      [(r) => td(RM.label(r['Месяц']) + (r['Месяц'] === '2026-08' ? ' (с 11.08)' : r['Месяц'] === curMonth ? ' (идёт)' : '')), ...cols2.map((f) => (r) => cellWithDelta(r, f))],
+      (r) => enc(r['Месяц']) + ',' + enc(r['Менеджер']), (r) => r['Месяц'] === M);
+
+    fill(document.getElementById('qual-table'), rows.filter((r) => r['Менеджер'] === 'Все'),
+      [(r) => td(RM.label(r['Месяц'])), (r) => td(fmtF('Новых лидов', r['Новых лидов']), 'rm-n'), (r) => td(fmtF('Квалификация, мин', r['Квалификация, мин']), 'rm-n' + (r['Квалификация, мин'] > 60 ? ' rm-bad' : r['Квалификация, мин'] != null && r['Квалификация, мин'] <= 30 ? ' rm-good' : '')), (r) => td(fmtF('За 60 мин', r['За 60 мин']), 'rm-n'), (r) => td(fmtF('Мусор', r['Мусор']), 'rm-n')],
+      (r) => enc(r['Месяц']) + ',' + enc(r['Менеджер']), (r) => r['Месяц'] === M);
+
+    // bars: new leads vs YSELL by month for the selected manager
+    const box = document.getElementById('bars'); box.replaceChildren();
+    const series = [{ f: 'Новых лидов', name: 'Зашло в воронку', c: dash.colors[0] }, { f: 'Подключено к YSELL', c: dash.colors[3] }, { f: 'Отказ / перестал отвечать', c: 'var(--cds-chart-status-critical)' }];
+    document.getElementById('bars-legend').replaceChildren(...series.map((s) => { const sp = document.createElement('span'); const i = document.createElement('i'); i.style.background = s.c; sp.append(i, document.createTextNode(s.name || s.f)); return sp; }));
+    const data = rows.filter((r) => r['Менеджер'] === N);
+    if (data.length) {
+      const W = Math.max(280, box.clientWidth), H = 240, ml = 36, mb = 24;
+      const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+      const x0 = d3.scaleBand(data.map((r) => r['Месяц']), [ml, W - 8]).padding(0.25);
+      const x1 = d3.scaleBand(series.map((s) => s.f), [0, x0.bandwidth()]).padding(0.12);
+      const y = d3.scaleLinear([0, d3.max(data, (r) => d3.max(series, (s) => r[s.f])) || 1], [H - mb, 10]).nice();
+      svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', ml).attr('x2', W - 8).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+      svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', ml - 6).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(d3.format(','));
+      svg.append('g').selectAll('text').data(data).join('text').attr('x', (r) => x0(r['Месяц']) + x0.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((r) => RM.label(r['Месяц']).split(' ')[0]);
+      const tip = document.createElement('div'); tip.className = 'rm-tip'; tip.hidden = true; box.append(tip);
+      const g = svg.append('g').selectAll('g').data(data).join('g').attr('transform', (r) => `translate(${x0(r['Месяц'])},0)`);
+      g.selectAll('rect').data((r) => series.map((s) => ({ r, s }))).join('rect')
+        .attr('x', (q) => x1(q.s.f)).attr('width', x1.bandwidth()).attr('y', (q) => y(q.r[q.s.f])).attr('height', (q) => Math.max(0, H - mb - y(q.r[q.s.f]))).attr('rx', 3).attr('fill', (q) => q.s.c)
+        .attr('opacity', (q) => (q.r['Месяц'] === M ? 1 : 0.55))
+        .on('mousemove', (ev, q) => { tip.textContent = RM.label(q.r['Месяц']) + ' · ' + q.s.f + ': ' + RM.fmt(q.r[q.s.f]); tip.hidden = false; const [px, py] = d3.pointer(ev, box); tip.style.left = Math.min(px + 10, box.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = Math.max(0, py - 30) + 'px'; })
+        .on('mouseleave', () => { tip.hidden = true; });
+    }
+
+    const take = document.getElementById('takeaway');
+    if (row) {
+      take.replaceChildren();
+      const add = (t, b) => { const n = b ? document.createElement('b') : document.createTextNode(t); if (b) n.textContent = t; take.append(n); };
+      add(RM.label(M) + (M === curMonth ? ' (месяц идёт)' : '') + ', ' + who + ': ');
+      add(RM.fmt(row['Новых лидов']) + ' зашло в воронку', true); if (row['Из них созданы раньше']) add(' (из них ' + RM.fmt(row['Из них созданы раньше']) + ' перенесены из других воронок)'); add(', '); add(RM.fmt(row['Подключено к YSELL']) + ' подключено к YSELL', true);
+      add(' (конверсия ' + RM.pct(row['Конверсия']) + (row['Δ Конверсия'] != null ? ', ' + deltaTxt('Конверсия', row['Δ Конверсия']) + ' к прошлому месяцу' : '') + '), ' + RM.fmt(row['Отказ / перестал отвечать']) + ' ушло в отказ.');
+    }
+  });
+})();
+</script>
+
+<script>
+dash.calc('cohort', {
+  inputs: ['hist', 'deals_detail'],
+  title: 'Когорты лидов по месяцам',
+  description: 'Сделки по месяцу создания (с августа 2026), по текущему ответственному и всего («Все»; без Юлии Перелет и Assistant Assistant; Юлия Мартынова в «Все» не входит): сколько пришло, сколько когда-либо дошли до YSELL («Подключение к YSELL» или «Сделка успешна»), где остальные сейчас (отказ/«перестал отвечать», мусор, в работе, действующие), конверсия = дошли до YSELL / пришло, медиана дней от создания до первого YSELL.',
+  fn: (hist, deals_detail) => {
+    const G = (s) => ['Подключение к YSELL', 'Сделка успешна'].includes(s) ? 'success' : ['Отказ клиента', 'Отказ перп центра', 'Клиент перестал отвечать', 'Сделка провалена', 'Анализ причины провала'].includes(s) ? 'lost' : ['Нецелевой лид', 'СПАМ', 'Прочее'].includes(s) ? 'junk' : s === 'Обращение действующего' ? 'client' : 'live';
+    const ms = (s) => new Date(s.replace(' ', 'T') + ':00+03:00').getTime();
+    const med = (xs) => { const s = xs.slice().sort((p, q) => p - q); if (!s.length) return null; const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : Math.round((s[m - 1] + s[m]) / 2); };
+    const firstWin = {}; hist.filter((h) => G(h['Стадия']) === 'success').forEach((h) => { const id = h['ID сделки']; if (!firstWin[id] || h['Время'] < firstWin[id]) firstWin[id] = h['Время']; });
+    const out = {};
+    const get = (m, n) => (out[m + '|' + n] = out[m + '|' + n] || { 'Месяц': m, 'Менеджер': n, 'Пришло': 0, 'Дошли до YSELL': 0, 'В отказе': 0, 'В мусоре': 0, 'В работе': 0, 'Действующие': 0, _d: [] });
+    deals_detail.filter((d) => d['Создана'] >= '2026-08' && !['Юлия Перелет', 'Assistant Assistant'].includes(d['Менеджер'])).forEach((d) => {
+      const m = d['Создана'].slice(0, 7), g = G(d['Стадия сейчас']);
+      const won = !!firstWin[d['ID сделки']] || g === 'success';
+      [d['Менеджер'], ...(d['Менеджер'] !== 'Юлия Мартынова' ? ['Все'] : [])].forEach((n) => {
+        const o = get(m, n); o['Пришло']++;
+        if (won) { o['Дошли до YSELL']++; if (firstWin[d['ID сделки']]) o._d.push(Math.max(0, Math.round((ms(firstWin[d['ID сделки']]) - ms(d['Создана'])) / 864e5))); }
+        else if (g === 'lost') o['В отказе']++;
+        else if (g === 'junk') o['В мусоре']++;
+        else if (g === 'client') o['Действующие']++;
+        else o['В работе']++;
+      });
+    });
+    return Object.values(out).map((o) => ({ 'Месяц': o['Месяц'], 'Менеджер': o['Менеджер'], 'Пришло': o['Пришло'], 'Дошли до YSELL': o['Дошли до YSELL'], 'Конверсия': o['Пришло'] ? o['Дошли до YSELL'] / o['Пришло'] : 0, 'В отказе': o['В отказе'], 'В мусоре': o['В мусоре'], 'В работе': o['В работе'], 'Действующие': o['Действующие'], 'Дней до YSELL': med(o._d) }));
+  },
+});
+
+dash.calc('cohort_all', {
+  inputs: ['cohort'],
+  title: 'Когорты с изменением к прошлому месяцу',
+  description: 'Когорты лидов по месяцу и менеджеру плюс изменение каждой цифры к лидам предыдущего месяца (Δ).',
+  fn: (cohort) => {
+    const by = {}; cohort.forEach((r) => { by[r['Месяц'] + '|' + r['Менеджер']] = r; });
+    const prev = (m) => { const [y, mo] = m.split('-').map(Number); return mo === 1 ? `${y - 1}-12` : `${y}-${String(mo - 1).padStart(2, '0')}`; };
+    const F = ['Пришло', 'Дошли до YSELL', 'Конверсия', 'В отказе', 'В мусоре', 'В работе', 'Дней до YSELL'];
+    return cohort.map((r) => { const p = by[prev(r['Месяц']) + '|' + r['Менеджер']]; const o = { ...r }; F.forEach((f) => { o['Δ ' + f] = p && r[f] != null && p[f] != null ? r[f] - p[f] : null; }); return o; })
+      .sort((a, b) => (a['Месяц'] < b['Месяц'] ? -1 : a['Месяц'] > b['Месяц'] ? 1 : a['Менеджер'] === 'Все' ? -1 : b['Менеджер'] === 'Все' ? 1 : b['Дошли до YSELL'] - a['Дошли до YSELL']));
+  },
+});
+</script>
+
+<script>
+dash.calc('pf', {
+  inputs: ['plan'],
+  title: 'Сводка план / факт',
+  description: 'Из вкладки «План KPI» таблицы «Отчет воронка FFB»: по каждому показателю старт, последний факт, цель и факт на ноябрь и декабрь.',
+  fn: (plan) => {
+    const ms = [...new Set(plan.map((r) => r['Месяц']))].sort();
+    return [...new Set(plan.map((r) => r['Показатель']))].map((n) => {
+      const rows = plan.filter((r) => r['Показатель'] === n);
+      const at = (m) => rows.find((r) => r['Месяц'] === m) || {};
+      const lm = rows.filter((r) => r['Факт'] != null).map((r) => r['Месяц']).sort().pop();
+      return {
+        'Показатель': n,
+        'Старт': rows[0]['Старт'] ?? null,
+        'Сейчас': at(lm)['Факт'] ?? null,
+        'План ноябрь': at('2026-11')['План'] ?? null,
+        'Факт ноябрь': at('2026-11')['Факт'] ?? null,
+        'План декабрь': at('2026-12')['План'] ?? null,
+        'Факт декабрь': at('2026-12')['Факт'] ?? null,
+      };
+    });
+  },
+});
+</script>
+
+<script>
+(() => {
+  const root = document.querySelector('.rm');
+  const views = document.getElementById('views');
+  const take = document.getElementById('pf-take');
+  const tbody = document.querySelector('#pf-table tbody');
+  views.addEventListener('click', (e) => { const b = e.target.closest('button[data-view]'); if (b) dash.setParams({ view: b.dataset.view === 'plan' ? 'plan' : null }); });
+  const fmtMin = (v) => (v < 120 ? Math.round(v) + ' мин' : d3.format('.1f')(v / 60).replace('.', ',') + ' ч');
+  const kindOf = (n) => (n.startsWith('Первое касание') ? 'min' : n.startsWith('Горячие') ? 'num' : 'pct');
+  const isSnap = (n) => n.startsWith('Живые') || n.startsWith('Горячие');
+  const upGood = (n) => n.startsWith('Конверсия');
+  const fv = (n, v) => { if (v == null) return '—'; const k = kindOf(n); return k === 'pct' ? d3.format('.1%')(v).replace('.', ',') : k === 'min' ? fmtMin(v) : d3.format(',')(v); };
+  const verdict = (n, f, p) => (f == null || p == null ? '' : (upGood(n) ? f >= p : f <= p) ? ' rm-good' : ' rm-bad');
+  const td = (t, c) => { const e = document.createElement('td'); e.textContent = t; if (c) e.className = c; return e; };
+  const abbr = (m) => RM.label(m).slice(0, 3) + '.';
+
+  function spark(box, name, rows) {
+    box.replaceChildren();
+    const snap = isSnap(name), ms = rows.map((r) => r['Месяц']);
+    const W = Math.max(240, box.clientWidth), H = 170, mt = 24, mb = 24, mx = 26;
+    const facts0 = rows.filter((r) => r['Факт'] != null);
+    const use = snap ? facts0 : facts0.slice(0, -1);
+    let trend = null;
+    if (use.length >= 2) {
+      const xs = use.map((r) => ms.indexOf(r['Месяц'])), ys = use.map((r) => r['Факт']), mx0 = d3.mean(xs), my0 = d3.mean(ys);
+      const den = d3.sum(xs, (v) => (v - mx0) * (v - mx0));
+      const sl = den ? d3.sum(xs, (v, i) => (v - mx0) * (ys[i] - my0)) / den : 0, ic = my0 - sl * mx0;
+      trend = [xs[0], ms.length - 1].map((k) => ({ m: ms[k], v: Math.max(0, ic + sl * k) }));
+    }
+    const vals = rows.flatMap((r) => [r['Факт'], r['План']]).concat(trend ? trend.map((p) => p.v) : []).filter((v) => v != null);
+    const y = d3.scaleLinear([0, (d3.max(vals) || 1) * 1.2], [H - mb, mt]);
+    const x = d3.scalePoint(ms, [mx, W - mx]);
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    svg.append('line').attr('x1', mx - 12).attr('x2', W - mx + 12).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', 'var(--cds-chart-grid)');
+    const path = d3.line().x((p) => x(p.m)).y((p) => y(p.v));
+    const fp = rows.filter((r) => r['Факт'] != null).map((r) => ({ m: r['Месяц'], v: r['Факт'] }));
+    const pp = rows.filter((r) => r['План'] != null).map((r) => ({ m: r['Месяц'], v: r['План'] }));
+    if (fp.length > 1) svg.append('path').attr('d', path(fp)).attr('fill', 'none').attr('stroke', dash.colors[0]).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+    if (trend) svg.append('path').attr('d', path(trend)).attr('fill', 'none').attr('stroke', 'var(--color-fg-muted)').attr('stroke-width', 1.5).attr('stroke-dasharray', '1 4').attr('stroke-linecap', 'round');
+    if (pp.length) svg.append('path').attr('d', path(fp.length ? [fp[fp.length - 1], ...pp] : pp)).attr('fill', 'none').attr('stroke', dash.colors[3]).attr('stroke-width', 2).attr('stroke-dasharray', '4 4');
+    svg.append('g').selectAll('circle').data(fp).join('circle').attr('cx', (p) => x(p.m)).attr('cy', (p) => y(p.v)).attr('r', 4).attr('fill', (p, i) => (!snap && i === fp.length - 1 ? 'var(--color-bg)' : dash.colors[0])).attr('stroke', dash.colors[0]).attr('stroke-width', 2);
+    svg.append('g').selectAll('path').data(pp).join('path').attr('transform', (p) => `translate(${x(p.m)},${y(p.v)})`).attr('d', d3.symbol().type(d3.symbolDiamond).size(80)()).attr('fill', dash.colors[3]);
+    const lab = (arr, dy, fill) => svg.append('g').selectAll('text').data(arr).join('text').attr('x', (p) => x(p.m)).attr('y', (p) => y(p.v) + dy).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', fill).text((p) => fv(name, p.v));
+    lab(fp, -9, 'var(--color-fg)');
+    lab(pp, -10, 'var(--color-fg-muted)');
+    svg.append('g').selectAll('text').data(ms).join('text').attr('x', (m) => x(m)).attr('y', H - 6).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(abbr);
+    const tip = document.createElement('div'); tip.className = 'rm-tip'; tip.hidden = true; box.append(tip);
+    const step = x.step();
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r['Месяц']) - step / 2).attr('width', step).attr('y', 0).attr('height', H).attr('fill', 'transparent')
+      .on('mousemove', (ev, r) => {
+        tip.textContent = RM.label(r['Месяц']) + (r['Факт'] != null ? ' · факт ' + fv(name, r['Факт']) : '') + (r['План'] != null ? ' · план ' + fv(name, r['План']) : '');
+        tip.hidden = false; const [px, py] = d3.pointer(ev, box);
+        tip.style.left = Math.max(0, Math.min(px + 10, box.clientWidth - tip.offsetWidth)) + 'px'; tip.style.top = Math.max(0, py - 30) + 'px';
+      })
+      .on('mouseleave', () => { tip.hidden = true; });
+  }
+
+  dash.onData(() => {
+    const on = dash.params().view === 'plan';
+    root.classList.toggle('pf-on', on);
+    [...views.querySelectorAll('button')].forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.view === 'plan') === on)));
+    if (!on) return;
+    const d = dash.data('pf'), s = dash.data('plan');
+    const bad = ['plan', 'pf'].some((x) => dash.data(x).status === 'error');
+    if (d.status !== 'ok' || s.status !== 'ok' || !d.data.length) { if (bad) take.textContent = 'Данные плана не загрузились. Подробности в «Источниках».'; return; }
+
+    document.getElementById('pf-legend').replaceChildren(...[['Факт', dash.colors[0], false], ['План', dash.colors[3], false], ['Тренд (по полным месяцам)', 'var(--color-fg-muted)', false], ['Текущий месяц ещё идёт', dash.colors[0], true]].map(([t, c, h]) => {
+      const sp = document.createElement('span'), i = document.createElement('i');
+      if (h) i.className = 'pf-hollow'; else i.style.background = c;
+      sp.append(i, document.createTextNode(t)); return sp;
+    }));
+
+    const hk = dash.data('hist_kpi');
+    const HF = { 'Конверсия': 'Конверсия', 'Доля': 'Молчуны', 'Первое': 'Касание', 'Лиды без': 'Без касания', 'Живые': 'Живые без дела', 'Горячие': 'Горячие зависшие' };
+    const hfield = (n) => HF[Object.keys(HF).find((k) => n.startsWith(k))];
+    const dmy = (x) => x.slice(8, 10) + '.' + x.slice(5, 7) + '.' + x.slice(0, 4);
+    let cmpRow = null;
+    const sel = document.getElementById('pf-cmp'), cnote = document.getElementById('pf-cmp-note'), ch = document.getElementById('pf-cmp-h');
+    if (hk.status === 'ok' && hk.data.length) {
+      const dates = hk.data.map((r) => r['Дата']);
+      const want = dash.params().cmp;
+      if (sel.options.length !== dates.length + 1) {
+        sel.replaceChildren(new Option('без сравнения', 'none'), ...dates.slice().reverse().map((x) => new Option(dmy(x), x)));
+        sel.onchange = () => dash.setParams({ cmp: sel.value });
+      }
+      let pick = want;
+      if (!pick) { const last = new Date(dates[dates.length - 1] + 'T12:00:00'); last.setDate(last.getDate() - 7); const iso = last.toISOString().slice(0, 10); pick = dates.filter((x) => x <= iso).pop() || dates[0]; }
+      sel.value = pick;
+      if (pick !== 'none') { cmpRow = hk.data.find((r) => r['Дата'] === pick) || null; }
+      cnote.textContent = cmpRow ? 'Значения на ' + dmy(cmpRow['Дата']) + (cmpRow['Источник'] ? ' (' + cmpRow['Источник'] + ')' : '') + '; «Сейчас» — на сегодняшнюю выгрузку.' : (pick === 'none' ? '' : 'Нет данных на эту дату.');
+      ch.textContent = cmpRow ? 'Было ' + dmy(cmpRow['Дата']).slice(0, 5) : 'Было';
+    }
+    const dTxtPf = (n, dv) => { const k = kindOf(n), sg = dv > 0 ? '+' : dv < 0 ? '−' : '±', a = Math.abs(dv); return sg + (k === 'pct' ? (Math.round(a * 1000) / 10 + '').replace('.', ',') + ' п.п.' : k === 'min' ? fmtMin(a) : d3.format(',')(a)); };
+    const cmpCells = (n, r) => {
+      const v = cmpRow ? cmpRow[hfield(n)] : null, cur = r['Сейчас'];
+      const c1 = td(v == null ? '—' : fv(n, v), 'rm-n');
+      if (v == null || cur == null) return [c1, td('—', 'rm-n')];
+      const dv = cur - v, good = dv === 0 ? '' : ((upGood(n) ? dv > 0 : dv < 0) ? ' rm-good' : ' rm-bad');
+      return [c1, td(dTxtPf(n, dv), 'rm-n' + good)];
+    };
+    (() => {
+      const hero = document.getElementById('pf-hero'), name = 'Доля лидов месяца в «перестал отвечать»';
+      const row = d.data.find((x) => x['Показатель'].startsWith('Доля'));
+      if (!row) { hero.hidden = true; return; }
+      const EXC = ['Юлия Мартынова', 'Юлия Перелет', 'Assistant Assistant'], dd = dash.data('deals_detail');
+      const stuckN = dd.status === 'ok' ? dd.data.filter((x) => x['Стадия сейчас'] === 'Клиент перестал отвечать' && !EXC.includes(x['Менеджер'])).length : null;
+      let same = null, dv = null, lastRow = null;
+      if (hk.status === 'ok' && hk.data.length > 7) {
+        lastRow = hk.data[hk.data.length - 1];
+        const pm = new Date(lastRow['Дата'] + 'T12:00:00'); pm.setMonth(pm.getMonth() - 1);
+        same = hk.data.filter((x) => x['Дата'] <= pm.toISOString().slice(0, 10)).pop() || null;
+        const lim = new Date(lastRow['Дата'] + 'T12:00:00'); lim.setDate(lim.getDate() - 7);
+        const prev = hk.data.filter((x) => x['Дата'] <= lim.toISOString().slice(0, 10)).pop();
+        if (prev && prev['Молчуны'] != null && lastRow['Молчуны'] != null) dv = lastRow['Молчуны'] - prev['Молчуны'];
+      }
+      hero.replaceChildren(); hero.hidden = false;
+      const k = document.createElement('div'); k.className = 'pf-kick'; k.textContent = 'Главная борьба отдела';
+      const h = document.createElement('h3'); h.textContent = 'Клиенты, которые перестали отвечать';
+      const hv = document.createElement('div'); hv.className = 'pf-hv';
+      const cell = (l, v) => { const c = document.createElement('div'); const s = document.createElement('span'); s.textContent = l; const b = document.createElement('b'); b.textContent = v; c.append(s, b); hv.append(c); };
+      cell('Сделок в этой стадии сейчас', stuckN == null ? '—' : d3.format(',')(stuckN));
+      cell('Лиды месяца сейчас', fv(row['Показатель'], row['Сейчас']));
+      if (same && same['Молчуны'] != null && lastRow) cell('На тот же день ' + dmy(same['Дата']).slice(0, 5) + ' в прошлом месяце', fv(row['Показатель'], same['Молчуны']));
+      cell('Цель к декабрю', fv(row['Показатель'], row['План декабрь']));
+      const msg = document.createElement('div'); msg.className = 'rm-note';
+      const better = same && lastRow && same['Молчуны'] != null && lastRow['Молчуны'] != null ? lastRow['Молчуны'] - same['Молчуны'] : null;
+      msg.textContent = (better == null ? '' : better < 0 ? 'Темп лучше, чем в прошлом месяце на ту же дату: ' + dTxtPf(row['Показатель'], better) + ' ' : better > 0 ? 'Темп хуже, чем в прошлом месяце на ту же дату: ' + dTxtPf(row['Показатель'], better) + ' ' : '') + 'Задача РОПа — вернуть в работу сделки из этой стадии и не давать новым лидам замолкать: дожим в первые дни после касания. Сравнение «на тот же день» честнее, чем «месяц к месяцу»: лиды месяца ещё созревают.';
+      hero.append(k, h, hv, msg);
+    })();
+    tbody.replaceChildren();
+    d.data.forEach((r) => {
+      const n = r['Показатель'], tr = document.createElement('tr');
+      tr.dataset.key = n;
+      tr.append(td(n), td(fv(n, r['Старт']), 'rm-n'), td(fv(n, r['Сейчас']), 'rm-n'), td(fv(n, r['План ноябрь']), 'rm-n'), td(fv(n, r['Факт ноябрь']), 'rm-n' + verdict(n, r['Факт ноябрь'], r['План ноябрь'])), td(fv(n, r['План декабрь']), 'rm-n'), td(fv(n, r['Факт декабрь']), 'rm-n' + verdict(n, r['Факт декабрь'], r['План декабрь'])), ...cmpCells(n, r));
+      tbody.append(tr);
+    });
+
+    d.data.forEach((r, i) => {
+      const n = r['Показатель'], t = document.getElementById('pf-t' + i), note = document.getElementById('pf-n' + i), box = document.getElementById('pf-c' + i);
+      if (!t || !note || !box) return;
+      t.textContent = n;
+      note.replaceChildren();
+      let dv = null;
+      if (hk.status === 'ok' && hk.data.length > 7) {
+        const hf = hfield(n), last = hk.data[hk.data.length - 1], lim = new Date(last['Дата'] + 'T12:00:00'); lim.setDate(lim.getDate() - 7);
+        const prev = hk.data.filter((x) => x['Дата'] <= lim.toISOString().slice(0, 10)).pop();
+        if (prev && last[hf] != null && prev[hf] != null) dv = last[hf] - prev[hf];
+      }
+      const dir = dv == null || dv === 0 ? 'flat' : ((upGood(n) ? dv > 0 : dv < 0) ? 'good' : 'bad');
+      const chg = document.createElement('div'); chg.className = 'pf-chg ' + dir;
+      const ar = document.createElement('span'); ar.className = 'pf-arrow'; ar.textContent = dv == null ? '•' : dv > 0 ? '▲' : dv < 0 ? '▼' : '►';
+      const big = document.createElement('span'); big.className = 'pf-chgv'; big.textContent = dv == null ? 'нет данных' : dv === 0 ? 'без изменений' : dTxtPf(n, dv);
+      const cap0 = document.createElement('span'); cap0.className = 'pf-chgc'; cap0.textContent = 'за 7 дней';
+      chg.append(ar, big, cap0);
+      const cur = r['Сейчас'], T = r['План декабрь'];
+      const left = cur != null && T != null ? Math.abs(T - cur) : null;
+      const leftTxt = left == null ? '—' : (kindOf(n) === 'pct' ? (Math.round(left * 1000) / 10 + '').replace('.', ',') + ' п.п.' : kindOf(n) === 'min' ? fmtMin(left) : d3.format(',')(left));
+      const vals = document.createElement('div'); vals.className = 'pf-vals';
+      [['Сейчас', fv(n, cur)], ['Цель к декабрю', fv(n, T)], ['Осталось', leftTxt]].forEach(([l, v]) => {
+        const c = document.createElement('div'); c.className = 'pf-val'; const s1 = document.createElement('span'); s1.textContent = l; const s2 = document.createElement('b'); s2.textContent = v; c.append(s1, s2); vals.append(c);
+      });
+      note.append(chg, vals);
+      const old = box.parentElement.querySelector('.pf-text'); if (old) old.remove();
+      const tx = document.createElement('p'); tx.className = 'rm-note pf-text';
+      tx.textContent = (dv == null ? '' : dir === 'good' ? 'За 7 дней движемся к цели. ' : dir === 'bad' ? 'За 7 дней уходим от цели. ' : '') + (isSnap(n) ? 'Снимок на сегодня.' : 'Считается по лидам месяца прихода; текущий месяц ещё созревает.');
+      box.after(tx);
+      note.parentElement.style.borderTop = '4px solid ' + (dir === 'good' ? '#19b45a' : dir === 'bad' ? '#ee4540' : 'var(--color-border-line)');
+      spark(box, n, s.data.filter((x) => x['Показатель'] === n));
+    });
+
+    const by = (p) => d.data.find((r) => r['Показатель'].startsWith(p)) || {};
+    const c = by('Конверсия'), r1 = by('Первое'), h = by('Горячие');
+    take.textContent = 'Цель к декабрю: конверсия лидов в YSELL с ' + fv(c['Показатель'] || 'Конверсия', c['Старт']) + ' до ' + fv(c['Показатель'] || 'Конверсия', c['План декабрь']) + ', первое касание — не дольше ' + fv(r1['Показатель'] || 'Первое', r1['План декабрь']) + ', горячих сделок без движения — ' + fv(h['Показатель'] || 'Горячие', h['План декабрь']) + '. Сейчас на экране точка отсчёта, факт ноября появится в таблице по ходу месяца.';
+  });
+})();
+</script>
+
+<script>
+(() => {
+  const modes = document.getElementById('modes');
+  modes.addEventListener('click', (e) => { const b = e.target.closest('button[data-mode]'); if (b) dash.setParams({ mode: b.dataset.mode === 'events' ? null : b.dataset.mode }); });
+  const td = (t, c) => { const e = document.createElement('td'); e.textContent = t; if (c) e.className = c; return e; };
+  const enc = (s) => encodeURIComponent(s);
+  const fmtF = (f, v) => (v == null ? '—' : f === 'Конверсия' ? RM.pct(v) : RM.fmt(v));
+  const GOOD = new Set(['Пришло', 'Дошли до YSELL', 'Конверсия']); const BAD = new Set(['В отказе', 'В мусоре', 'Дней до YSELL']);
+  const dTxt = (f, d) => { if (d == null) return ''; const s = d > 0 ? '+' : d < 0 ? '−' : '±'; return s + (f === 'Конверсия' ? Math.round(Math.abs(d) * 100) + ' п.п.' : RM.fmt(Math.abs(d))); };
+  const dCls = (f, d) => (d == null || d === 0 ? '' : GOOD.has(f) ? (d > 0 ? 'rm-good' : 'rm-bad') : BAD.has(f) ? (d > 0 ? 'rm-bad' : 'rm-good') : '');
+  const cell = (r, f) => { const e = td(fmtF(f, r[f]), 'rm-n'); if (r['Δ ' + f] != null) { const s = document.createElement('span'); s.className = 'rm-d ' + dCls(f, r['Δ ' + f]); s.textContent = dTxt(f, r['Δ ' + f]); e.append(s); } return e; };
+  const pctCell = (r, f) => { const e = td(fmtF(f, r[f]), 'rm-n'); if (r['Пришло'] && f !== 'Пришло') { const s = document.createElement('span'); s.className = 'rm-d'; s.textContent = RM.pct(r[f] / r['Пришло']); e.append(s); } return e; };
+  function fill(tbl, rows, cols, sel) { const tb = tbl.querySelector('tbody'); tb.replaceChildren(); rows.forEach((r) => { const tr = document.createElement('tr'); cols.forEach((c) => tr.append(c(r))); tr.dataset.key = enc(r['Месяц']) + ',' + enc(r['Менеджер']); if (sel(r)) tr.classList.add('rm-sel'); tb.append(tr); }); }
+
+  dash.onData(() => {
+    const isC = dash.params().mode === 'cohort';
+    [...modes.querySelectorAll('button')].forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.mode === 'cohort') === isC)));
+    document.getElementById('mode-note').textContent = isC ? 'Лиды месяца: берём только сделки, созданные в выбранном месяце, и смотрим, что с ними стало на сегодня.' : 'События месяца: всё, что произошло в воронке за месяц, со всеми сделками — когда бы они ни пришли.';
+    ['month', 'managers', 'dynamics'].forEach((id) => { document.getElementById(id).hidden = isC; });
+    ['c-month', 'c-managers', 'c-dyn'].forEach((id) => { document.getElementById(id).hidden = !isC; });
+    const d = dash.data('cohort_all');
+    if (!isC || d.status !== 'ok' || !d.data.length) return;
+    const rows = d.data;
+    const months = [...new Set(rows.map((r) => r['Месяц']))].sort();
+    const M = RM.month() && months.includes(RM.month()) ? RM.month() : months[months.length - 1];
+    const N = RM.mgr(); const who = N === 'Все' ? 'вся команда' : N;
+    const cur = months[months.length - 1];
+    document.getElementById('c-title').textContent = 'Лиды за ' + RM.label(M).toLowerCase() + ' — ' + who;
+    document.getElementById('c-mgr-title').textContent = 'Лиды месяца по менеджерам — ' + RM.label(M);
+    document.getElementById('c-dyn-title').textContent = 'Лиды по месяцам поступления — ' + who;
+    const row = rows.find((r) => r['Месяц'] === M && r['Менеджер'] === N);
+    document.querySelectorAll('#c-month [data-source="cohort_all"][data-field]').forEach((el) => {
+      el.setAttribute('data-where', 'Месяц=' + enc(M) + '&Менеджер=' + enc(N));
+      const f = el.getAttribute('data-field'); el.classList.remove('dash-skeleton', 'rm-good', 'rm-bad');
+      if (!row) { el.textContent = '—'; return; }
+      if (f.startsWith('Δ ')) { const b = f.slice(2), v = row[f]; el.textContent = v == null ? 'нет данных за прошлый месяц' : dTxt(b, v) + ' к лидам прошлого месяца'; const c = dCls(b, v); if (c) el.classList.add(c); }
+      else { el.textContent = fmtF(f, row[f]); if (row['Пришло'] && ['Дошли до YSELL', 'В отказе', 'В мусоре', 'В работе'].includes(f)) el.textContent += ' · ' + RM.pct(row[f] / row['Пришло']); }
+    });
+    if (row) { const take = document.getElementById('takeaway'); take.replaceChildren(); const add = (s, b) => { const n = b ? document.createElement('b') : document.createTextNode(s); if (b) n.textContent = s; take.append(n); };
+      add('Лиды за ' + RM.label(M).toLowerCase() + ', ' + who + ': '); add(RM.fmt(row['Пришло']) + ' пришло', true); add(', на сегодня '); add(RM.fmt(row['Дошли до YSELL']) + ' дошли до YSELL (' + RM.pct(row['Конверсия']) + ')', true);
+      add(', ' + RM.fmt(row['В отказе']) + ' в отказе, ' + RM.fmt(row['В мусоре']) + ' в мусоре, ' + RM.fmt(row['В работе']) + ' ещё в работе.'); }
+    fill(document.getElementById('c-mgr-table'), rows.filter((r) => r['Месяц'] === M && r['Менеджер'] !== 'Юлия Мартынова'),
+      [(r) => td(r['Менеджер'] === 'Все' ? 'Вся команда' : r['Менеджер']), (r) => cell(r, 'Пришло'), (r) => pctCell(r, 'Дошли до YSELL'), (r) => cell(r, 'Конверсия'), (r) => pctCell(r, 'В отказе'), (r) => pctCell(r, 'В мусоре'), (r) => pctCell(r, 'В работе'), (r) => cell(r, 'Дней до YSELL')],
+      (r) => r['Менеджер'] === N && N !== 'Все');
+    fill(document.getElementById('c-by-month'), rows.filter((r) => r['Менеджер'] === N),
+      [(r) => td(RM.label(r['Месяц']) + (r['Месяц'] === cur ? ' (идёт)' : '')), (r) => cell(r, 'Пришло'), (r) => pctCell(r, 'Дошли до YSELL'), (r) => cell(r, 'Конверсия'), (r) => pctCell(r, 'В отказе'), (r) => pctCell(r, 'В мусоре'), (r) => pctCell(r, 'В работе'), (r) => pctCell(r, 'Действующие'), (r) => cell(r, 'Дней до YSELL')],
+      (r) => r['Месяц'] === M);
+    // stacked bars: what happened to each month's leads
+    const box = document.getElementById('c-bars'); box.replaceChildren();
+    const S = [{ f: 'Дошли до YSELL', c: 'var(--color-ok)' }, { f: 'В работе', c: dash.colors[0] }, { f: 'В отказе', c: 'var(--cds-chart-status-critical)' }, { f: 'В мусоре', c: 'var(--cds-chart-muted)' }, { f: 'Действующие', c: dash.colors[4] }];
+    document.getElementById('c-bars-legend').replaceChildren(...S.map((s) => { const sp = document.createElement('span'); const i = document.createElement('i'); i.style.background = s.c; sp.append(i, document.createTextNode(s.f)); return sp; }));
+    const data = rows.filter((r) => r['Менеджер'] === N);
+    if (!data.length) return;
+    const W = Math.max(280, box.clientWidth), H = 240, ml = 36, mb = 24;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img');
+    const x = d3.scaleBand(data.map((r) => r['Месяц']), [ml, W - 8]).padding(0.35);
+    const y = d3.scaleLinear([0, d3.max(data, (r) => r['Пришло']) || 1], [H - mb, 10]).nice();
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', ml).attr('x2', W - 8).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(y.ticks(4)).join('text').attr('x', ml - 6).attr('y', (v) => y(v) + 4).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(d3.format(','));
+    svg.append('g').selectAll('text').data(data).join('text').attr('x', (r) => x(r['Месяц']) + x.bandwidth() / 2).attr('y', H - 6).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((r) => RM.label(r['Месяц']).split(' ')[0]);
+    const tip = document.createElement('div'); tip.className = 'rm-tip'; tip.hidden = true; box.append(tip);
+    data.forEach((r) => {
+      let acc = 0;
+      S.forEach((s) => {
+        const v = r[s.f] || 0; if (!v) return;
+        svg.append('rect').attr('x', x(r['Месяц'])).attr('width', x.bandwidth()).attr('y', y(acc + v)).attr('height', y(acc) - y(acc + v)).attr('fill', s.c).attr('opacity', r['Месяц'] === M ? 1 : 0.6)
+          .on('mousemove', (ev) => { tip.textContent = RM.label(r['Месяц']) + ' · ' + s.f + ': ' + RM.fmt(v) + ' (' + RM.pct(v / r['Пришло']) + ')'; tip.hidden = false; const [px, py] = d3.pointer(ev, box); tip.style.left = Math.min(px + 10, box.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = Math.max(0, py - 30) + 'px'; })
+          .on('mouseleave', () => { tip.hidden = true; });
+        acc += v;
+      });
+    });
+  });
+})();
+</script>
