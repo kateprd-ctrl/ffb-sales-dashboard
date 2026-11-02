@@ -1,0 +1,182 @@
+<title>Лиды выставки White Label Expo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+<style>
+/* Макет: белая страница в стиле сайта Fulfillment-Box, шапка, сводка, таблицы, карточки лидов с раскрытием переписки. Тема всегда светлая. */
+:root{
+  --bg:#ffffff; --fg:#0b0b0c; --muted:#6b6f76; --line:#e7e8ea; --soft:#f5f5f6;
+  --accent:#d03040; --accent-soft:#fbe9eb;
+  --c-wait:#8aa4c8; --c-work:#2f9e6b; --c-got:#14a3a3; --c-noans:#e3a02f; --c-lost:#6b6f76; --c-del:#c9cbd0; --c-partner:#5b6ee1; --c-ready:#d03040;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--font);margin:0;
+  padding-block:0 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto}
+header.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 0;flex-wrap:wrap}
+header.top img{height:34px;width:auto;display:block}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:500;border:1px solid var(--line);background:var(--bg);color:var(--fg);white-space:nowrap}
+.pill.dark{background:var(--fg);color:#fff;border-color:var(--fg)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+h1{font-size:clamp(40px,8vw,76px);line-height:1;letter-spacing:-.03em;font-weight:800;margin:28px 0 0}
+h1 span{display:block;font-weight:300;color:#9a9da3}
+.lede{color:var(--muted);max-width:60ch;margin:16px 0 0;font-size:17px;text-wrap:pretty}
+section{margin-top:56px}
+h2{font-size:26px;letter-spacing:-.02em;font-weight:700;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 20px;max-width:70ch;font-size:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--soft);border-radius:20px;padding:18px}
+.kpi b{display:block;font-size:38px;line-height:1.05;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted);font-size:13px}
+.bars{margin-top:20px;display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:minmax(120px,210px) 1fr 36px;gap:12px;align-items:center;font-size:14px}
+.bar .tr{height:12px;background:var(--soft);border-radius:999px;overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:999px}
+.bar em{font-style:normal;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:20px}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;white-space:nowrap;background:var(--soft)}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-size:12px;border-radius:999px;padding:2px 9px;background:var(--soft);white-space:nowrap}
+.stack{display:flex;height:10px;border-radius:999px;overflow:hidden;min-width:120px;background:var(--soft)}
+.stack i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);margin:0 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+details.day{border:1px solid var(--line);border-radius:16px;margin-top:8px;padding:0 16px}
+details.day>summary{padding:12px 0;cursor:pointer;font-weight:600;list-style:none;display:flex;gap:10px;align-items:center}
+details.day>summary::-webkit-details-marker{display:none}
+details.day>summary small{color:var(--muted);font-weight:400}
+.chg{display:grid;grid-template-columns:62px 54px 1fr;gap:4px 12px;padding:7px 0;border-top:1px solid var(--line);font-size:14px;align-items:baseline}
+.chg .t{color:var(--muted);font-variant-numeric:tabular-nums}
+.chg .arrow{color:var(--muted)}
+.roi{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.roi .kpi b{font-size:30px}
+.verdict{margin-top:12px;border-radius:20px;background:var(--accent-soft);padding:16px 20px;font-weight:600}
+.verdict small{display:block;font-weight:400;color:var(--muted);margin-top:4px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.tools input,.tools select{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:9px 16px;background:var(--bg);color:var(--fg);min-width:0}
+.tools input{flex:1 1 220px}
+.tools input:focus,.tools select:focus,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cnt{color:var(--muted);font-size:14px;align-self:center}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px;align-items:start}
+.card{border:1px solid var(--line);border-radius:24px;padding:20px;min-width:0}
+.card .hd{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card .id{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.card h3{margin:2px 0 0;font-size:18px;font-weight:700;overflow-wrap:anywhere}
+.card .em{color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.badge{border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600;color:#fff;white-space:nowrap;flex:none}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin:16px 0;font-size:13.5px}
+.meta dt{color:var(--muted);font-size:12px}
+.meta dd{margin:0;font-weight:500}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 14px}
+.step{font-size:11.5px;line-height:1.3;color:var(--muted)}
+.step i{display:block;height:6px;border-radius:999px;background:var(--line);margin-bottom:6px}
+.step.on{color:var(--fg)}
+.step.on i{background:var(--fg)}
+.step b{display:block;font-weight:600}
+.open{display:inline-flex;margin:0 0 4px;background:var(--fg);color:#fff;text-decoration:none;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600}
+.open:hover{background:var(--accent)}
+details.mail{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+details.mail>summary{cursor:pointer;font-weight:600;font-size:14px}
+.msg{margin-top:10px;background:var(--soft);border-radius:14px;padding:12px 14px;min-width:0}
+.msg .mh{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:12.5px;color:var(--muted)}
+.msg .mh b{color:var(--fg)}
+.msg .sj{font-weight:600;margin:6px 0 4px;overflow-wrap:anywhere}
+.msg .tx{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13.5px;line-height:1.45;max-height:320px;overflow-y:auto;border-top:1px solid var(--line);padding-top:6px}
+.kind{border-radius:999px;padding:1px 9px;font-size:11.5px;font-weight:600;background:var(--bg);border:1px solid var(--line);color:var(--fg)}
+.kind.out{border-color:var(--accent);color:var(--accent)}
+.empty{color:var(--muted);padding:24px 0}
+footer{margin-top:56px;color:var(--muted);font-size:12.5px}
+@media(max-width:560px){.bar{grid-template-columns:1fr 36px}.bar .tr{grid-column:1/3;grid-row:2}.chg{grid-template-columns:50px 1fr}.chg .t:nth-child(2){display:none}.meta{grid-template-columns:1fr 1fr}}
+</style>
+<div class="wrap">
+<header class="top"><img id="logo" alt="Fulfillment-Box"><span class="pill dark"><span class="dot"></span><span id="asof"></span></span></header>
+<h1>Лиды выставки<span>White Label Expo.</span></h1>
+<p class="lede">Где сейчас каждый лид с выставки, что с ним делал менеджер, что он писал клиенту и как он шёл по воронке.</p>
+
+<section><h2>Сводка</h2><p class="sub">Текущее состояние всех лидов выставки.</p>
+<div class="kpis" id="kpis"></div><div class="bars" id="bars"></div></section>
+
+<section><h2>По менеджерам</h2><p class="sub">Лиды, стадии и письма по каждому ответственному. Письма считаются по листу «Письма и действия».</p>
+<div class="tw"><table id="mgt"></table></div></section>
+
+<section><h2>Динамика по дням</h2><p class="sub">Стадии лидов на конец каждого дня и число писем нарастающим итогом.</p>
+<div class="legend" id="legend"></div><div class="tw"><table id="dayt"></table></div>
+<h2 style="margin-top:36px;font-size:20px">Что изменилось с предыдущего дня</h2><p class="sub">Переходы между стадиями за последние 7 дней. Технические стадии пропущены.</p>
+<div id="changes"></div></section>
+
+<section><h2>Окупаемость выставки</h2><p class="sub">Расходы на выставку и результат на сегодня.</p>
+<div class="roi" id="roi"></div><div class="verdict" id="verdict"></div></section>
+
+<section><h2>Лиды</h2><p class="sub">По умолчанию сверху лиды со свежим последним касанием.</p>
+<div class="tools"><input id="q" type="search" placeholder="Поиск по ID, имени, e-mail" aria-label="Поиск"><select id="fs" aria-label="Стадия"></select><select id="fm" aria-label="Ответственный"></select><select id="so" aria-label="Сортировка"><option value="touch">Сначала свежее касание</option><option value="days">Больше дней в воронке</option><option value="id">По ID</option></select><span class="cnt" id="cnt"></span></div>
+<div class="cards" id="cards"></div></section>
+<footer id="foot"></footer>
+</div>
+<script>
+var D=/*DATA*/null;
+var COL={'Ожидаем ответа':'#8aa4c8','В проработке':'#2f9e6b','Ответ получен':'#14a3a3','Клиент не ответил':'#e3a02f','Клиент перестал отвечать':'#6b6f76','Новая/ будут удалены':'#c9cbd0','Новый партнер':'#5b6ee1','Готов стать клиентом':'#d03040','Подключение к YSELL':'#d03040','Новые':'#0b0b0c','Квалификация':'#0b0b0c'};
+var ORDER=['Новые','Квалификация','Ожидаем ответа','Ответ получен','В проработке','Готов стать клиентом','Подключение к YSELL','Новый партнер','Клиент не ответил','Клиент перестал отвечать','Новая/ будут удалены'];
+function $(i){return document.getElementById(i)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function pd(s){if(!s)return 0;var p=s.split(' ')[0].split('.');var tm=(s.split(' ')[1]||'00:00').split(':');return new Date(+p[2],+p[1]-1,+p[0],+tm[0],+tm[1]).getTime()}
+function nd(s){return s||'нет данных'}
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+var L=D.leads;
+$('logo').src=D.logo;$('asof').textContent='Данные из Bitrix24 · '+D.asof;
+// 1 summary
+var cnt={};L.forEach(function(l){cnt[l.stage]=(cnt[l.stage]||0)+1});
+var last=D.daily[D.daily.length-1];
+var qual=L.filter(function(l){return l.qual==='Да'}).length;
+var k=$('kpis');
+[[L.length,'всего лидов'],[qual,'квалифицировано'],[D.ysell,'«зашли» (Подключение к YSELL)'],[last[11],'писем исходящих'],[last[12],'писем входящих']].forEach(function(a){var d=el('div','kpi');d.appendChild(el('b',0,a[0]));d.appendChild(el('small',0,a[1]));k.appendChild(d)});
+var mx=Math.max.apply(null,Object.keys(cnt).map(function(s){return cnt[s]}));
+ORDER.concat(Object.keys(cnt)).filter(function(s,i,a){return a.indexOf(s)===i&&cnt[s]}).forEach(function(s){var r=el('div','bar');r.appendChild(el('span',0,s));var t=el('div','tr'),i=document.createElement('i');i.style.width=(cnt[s]/mx*100)+'%';i.style.background=COL[s]||'#999';t.appendChild(i);r.appendChild(t);r.appendChild(el('em',0,cnt[s]));$('bars').appendChild(r)});
+// 2 managers
+var mt=$('mgt');var h=el('tr');['Ответственный','Лидов','Стадии','Писем исх.','Писем вх.','Последнее касание'].forEach(function(x,i){var th=el('th',i>0&&i<5&&i!=2?'n':'',x);h.appendChild(th)});mt.appendChild(h);
+Object.keys(D.mg).sort(function(a,b){return D.mg[b].n-D.mg[a].n}).forEach(function(n){var m=D.mg[n],tr=el('tr');tr.appendChild(el('td',0,n));tr.appendChild(el('td','n',m.n));var td=el('td'),c=el('div','chips');ORDER.forEach(function(s){if(m.st[s]){var ch=el('span','chip',m.st[s]+' · '+s);c.appendChild(ch)}});td.appendChild(c);tr.appendChild(td);tr.appendChild(el('td','n',m.out));tr.appendChild(el('td','n',m.inn));tr.appendChild(el('td',0,nd(m.last)));mt.appendChild(tr)});
+// 3 dynamics
+var cols=[['Ожидаем ответа',3],['В проработке',4],['Ответ получен',5],['Клиент не ответил',6],['Клиент перестал отвечать',7],['Новая/ будут удалены',8],['Новый партнер',9]];
+var lg=$('legend');cols.forEach(function(c){var s=el('span');var i=document.createElement('i');i.style.background=COL[c[0]];s.appendChild(i);s.appendChild(document.createTextNode(c[0]==='Новый партнер'?'Прочие (Новый партнер)':c[0]));lg.appendChild(s)});
+var dt=$('dayt');var hr=el('tr');['Дата','Всего','Новых','Стадии','Писем исх.','Писем вх.'].forEach(function(x,i){hr.appendChild(el('th',i==3||i==0?'':'n',x))});dt.appendChild(hr);
+D.daily.forEach(function(r){var tr=el('tr');tr.appendChild(el('td',0,r[0].slice(0,5)));tr.appendChild(el('td','n',r[1]));tr.appendChild(el('td','n',r[2]));var td=el('td'),st=el('div','stack');var tot=+r[1];var parts=[];cols.forEach(function(c){var v=+r[c[1]];if(c[0]==='Новый партнер')v=+r[9];if(v>0){var i=document.createElement('i');i.style.width=(v/tot*100)+'%';i.style.background=COL[c[0]];i.title=c[0]+': '+v;st.appendChild(i);parts.push(v+' '+c[0].toLowerCase())}});td.appendChild(st);var sm=el('div','chips');sm.style.marginTop='6px';parts.forEach(function(p){sm.appendChild(el('span','chip',p))});td.appendChild(sm);tr.appendChild(td);tr.appendChild(el('td','n',r[11]));tr.appendChild(el('td','n',r[12]));dt.appendChild(tr)});
+// changes: last 7 days
+var asof=pd(D.asof+' 23:59'),from=asof-7*86400000;
+var tr7=D.trans.filter(function(t){return pd(t.d)>from});
+var days={};tr7.forEach(function(t){var d=t.d.split(' ')[0];(days[d]=days[d]||[]).push(t)});
+var dk=Object.keys(days).sort(function(a,b){return pd(b)-pd(a)});
+var ch=$('changes');
+dk.forEach(function(d,idx){var de=document.createElement('details');de.className='day';if(idx===0)de.open=true;var sm=document.createElement('summary');sm.appendChild(document.createTextNode(d));sm.appendChild(el('small',0,days[d].length+' '+(days[d].length%10==1&&days[d].length%100!=11?'изменение':'изменений')));de.appendChild(sm);
+days[d].forEach(function(t){var r=el('div','chg');r.appendChild(el('span','t',t.d.split(' ')[1]));r.appendChild(el('span','',t.id));var x=el('span');x.appendChild(document.createTextNode(t.frm?t.frm:'Вход'));x.appendChild(el('span','arrow',' → '));var b=el('b',0,t.to);x.appendChild(b);r.appendChild(x);de.appendChild(r)});ch.appendChild(de)});
+if(!dk.length)ch.appendChild(el('div','empty','За последние 7 дней изменений нет.'));
+// 4 ROI
+var cost=14344;
+var roi=$('roi');[['$'+fmt(cost),'расходы на выставку'],['$'+fmt(Math.round(cost/11)),'на один лид при делении на 11 лидов'],['$'+Math.round(cost/50),'на один лид при делении на все 50 сделок'],[D.ysell,'клиентов подключено к YSELL'],['$0','доход по факту']].forEach(function(a){var d=el('div','kpi');d.appendChild(el('b',0,a[0]));d.appendChild(el('small',0,a[1]));roi.appendChild(d)});
+$('verdict').textContent=D.ysell===0?'Выставка пока не окупилась.':'Подключено клиентов: '+D.ysell+'.';
+var vs=el('small',0,'Расходы $14 344 из расчёта Екатерины. Подключённые клиенты считаются по стадии «Подключение к YSELL» в листе лидов. Доход по факту пока $0.');$('verdict').appendChild(vs);
+// 5 cards
+var fs=$('fs'),fm=$('fm');
+function opt(s,v,t){var o=document.createElement('option');o.value=v;o.textContent=t;s.appendChild(o)}
+opt(fs,'','Все стадии');ORDER.forEach(function(s){if(cnt[s])opt(fs,s,s+' ('+cnt[s]+')')});
+opt(fm,'','Все ответственные');Object.keys(D.mg).forEach(function(n){opt(fm,n,n)});
+function mailBlock(l,box){var arr=D.letters[l.id]||[];if(box.dataset.done)return;box.dataset.done=1;if(!arr.length){box.appendChild(el('div','empty','нет данных'));return}
+arr.forEach(function(e){var m=el('div','msg'),hd=el('div','mh');hd.appendChild(el('b',0,e.d));var kd=e.t==='Письмо исходящее'?'out':'';hd.appendChild(el('span','kind '+kd,e.t));var who=[];if(e.f||e.to){var s=(e.f||'нет данных')+' → '+(e.to||'нет данных');hd.appendChild(el('span',0,s))}else if(e.a)hd.appendChild(el('span',0,e.a));m.appendChild(hd);if(e.s)m.appendChild(el('div','sj',e.s));if(e.x)m.appendChild(el('div','tx',e.x.replace(/\r\n?/g,'\n').replace(/\n{3,}/g,'\n\n').trim()));if(e.cc)m.appendChild(el('div','mh','Копия: '+e.cc));box.appendChild(m)})}
+function card(l){var c=el('article','card');var hd=el('div','hd'),lf=el('div');lf.appendChild(el('div','id','ID '+l.id));lf.appendChild(el('h3',0,l.contact||'Контакт: нет данных'));if(l.email)lf.appendChild(el('div','em',l.email));hd.appendChild(lf);var b=el('span','badge',l.stage);b.style.background=COL[l.stage]||'#999';hd.appendChild(b);c.appendChild(hd);
+var dl=el('dl','meta');[['Ответственный',l.resp],['Последнее касание',nd(l.last)],['Дней в воронке',l.days],['Что делалось',nd(l.did)]].forEach(function(p){var w=el('div');w.appendChild(el('dt',0,p[0]));w.appendChild(el('dd',0,p[1]));dl.appendChild(w)});c.appendChild(dl);
+var sp=el('div','steps');[['Новые',l.dN],['Квалификация',l.dK],['Готов стать клиентом',l.dG],['Подключение к YSELL',l.dY]].forEach(function(p){var s=el('div','step'+(p[1]?' on':''));s.appendChild(document.createElement('i'));s.appendChild(el('b',0,p[0]));s.appendChild(document.createTextNode(p[1]||'нет данных'));sp.appendChild(s)});c.appendChild(sp);
+var a=el('a','open','Открыть в Bitrix24');a.href='https://bitrix.estiwork-consult.com/crm/deal/details/'+l.id+'/';a.target='_blank';a.rel='noopener';c.appendChild(a);
+var n=(D.letters[l.id]||[]).length;var de=document.createElement('details');de.className='mail';var sm=el('summary',0,'Переписка и действия ('+n+')');de.appendChild(sm);var box=el('div');de.appendChild(box);de.addEventListener('toggle',function(){if(de.open)mailBlock(l,box)});c.appendChild(de);return c}
+var els={};L.forEach(function(l){els[l.id]=card(l)});
+function render(){var q=$('q').value.trim().toLowerCase(),s=fs.value,m=fm.value,so=$('so').value;
+var r=L.filter(function(l){return(!s||l.stage===s)&&(!m||l.resp===m)&&(!q||(l.id+' '+l.contact+' '+l.email).toLowerCase().indexOf(q)>-1)});
+r.sort(function(a,b){if(so==='id')return +a.id- +b.id;if(so==='days')return b.days-a.days||pd(b.last)-pd(a.last);return pd(b.last)-pd(a.last)||b.days-a.days});
+var box=$('cards');box.textContent='';r.forEach(function(l){box.appendChild(els[l.id])});if(!r.length)box.appendChild(el('div','empty','Ничего не найдено.'));$('cnt').textContent='Показано: '+r.length+' из '+L.length}
+['q','fs','fm','so'].forEach(function(i){$(i).addEventListener('input',render)});render();
+$('foot').textContent='Источник: Google-таблица «Whitelabelexpo — лиды выставки», данные Bitrix24 на '+D.asof+'.';
+</script>
